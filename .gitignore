@@ -1,0 +1,20 @@
+# Default .gitignore file for GitLab chef cookbook template
+# Update accordingly per cookbook
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+
+# Kitchen
+.kitchen
+.kitchen.local.yml
+
+# Berkshelf
+.vagrant
+Berksfile.lock
+
+# Bundler
+Gemfile.lock
+.bundle/*

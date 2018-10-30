@@ -1,0 +1,63 @@
+image: ruby:2.5
+
+variables:
+  DEBIAN_FRONTEND: noninteractive
+  KITCHEN_YAML: ".kitchen.ci.yml"
+  BUNDLE_PATH: "$CI_PROJECT_DIR/.bundle"
+  DIGITALOCEAN_TESTBOX_FQDN: template.${CI_PROJECT_NAMESPACE}.ci.gitlab.test
+
+stages:
+  - lint
+  - unit
+  - integration
+  - publish
+
+before_script:
+  - apt-get -qq update && apt-get -yqq install openssh-client rsync make jq
+  - make gems
+
+cookstyle:
+  stage: lint
+  cache:
+    paths:
+      - $BUNDLE_PATH
+  script:
+    - bundle exec cookstyle
+
+foodcritic:
+  stage: lint
+  cache:
+    paths:
+      - $BUNDLE_PATH
+  script:
+    - bundle exec foodcritic .
+
+rspec-test-job:
+  stage: unit
+  coverage: "/^\\s*Touch\\sCoverage:\\s*(\\d+\\.\\d+)%/"
+  cache:
+    paths:
+      - "$BUNDLE_PATH"
+  script:
+    - make rspec
+
+kitchen-test-job:
+  stage: integration
+  cache:
+    paths:
+      - "$BUNDLE_PATH"
+  script:
+    - make kitchen
+
+push-cookbook:
+  stage: publish
+  only:
+    refs:
+      - master
+    variables:
+      - "$OPS_CLONE_USERNAME"
+      - "$OPS_CLONE_PASSWORD"
+  script:
+    - git clone https://$OPS_CLONE_USERNAME:$OPS_CLONE_PASSWORD@ops.gitlab.net/gitlab-cookbooks/cookbook-publisher.git /tmp/cookbook-publisher
+    - cp /tmp/cookbook-publisher/publisher.rb .
+    - ruby publisher.rb
