@@ -29,7 +29,7 @@ default['gitlab-patroni']['config']['consul']['host'] = '127.0.0.1:8500'
 default['gitlab-patroni']['config']['bootstrap']['dcs']['ttl'] = 30
 default['gitlab-patroni']['config']['bootstrap']['dcs']['loop_wait'] = 10
 default['gitlab-patroni']['config']['bootstrap']['dcs']['retry_timeout'] = 10
-default['gitlab-patroni']['config']['bootstrap']['dcs']['maximum_lag_on_failover'] = 1048576
+default['gitlab-patroni']['config']['bootstrap']['dcs']['maximum_lag_on_failover'] = 1_048_576
 default['gitlab-patroni']['config']['bootstrap']['dcs']['postgresql']['use_pg_rewind'] = true
 default['gitlab-patroni']['config']['bootstrap']['dcs']['postgresql']['use_slots'] = true
 default['gitlab-patroni']['config']['bootstrap']['dcs']['postgresql']['parameters']['wal_level'] = 'replica'
@@ -40,7 +40,7 @@ default['gitlab-patroni']['config']['bootstrap']['dcs']['postgresql']['parameter
 default['gitlab-patroni']['config']['bootstrap']['dcs']['postgresql']['parameters']['checkpoint_timeout'] = 30
 default['gitlab-patroni']['config']['bootstrap']['initdb'] = [{ 'encoding' => 'UTF8' }, { 'locale' => 'C.UTF-8' }]
 default['gitlab-patroni']['config']['bootstrap']['users'][superuser_username]['password'] = superuser_password
-default['gitlab-patroni']['config']['bootstrap']['users'][superuser_username]['options'] = %w(createrole createdb)
+default['gitlab-patroni']['config']['bootstrap']['users'][superuser_username]['options'] = %w[createrole createdb]
 default['gitlab-patroni']['config']['bootstrap']['users'][replication_username]['password'] = replication_password
 default['gitlab-patroni']['config']['bootstrap']['users'][replication_username]['options'] = ['replication']
 default['gitlab-patroni']['config']['bootstrap']['pg_hba'] = [

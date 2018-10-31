@@ -1,2 +1,14 @@
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
