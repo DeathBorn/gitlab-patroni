@@ -77,7 +77,7 @@ end
 
 [
   log_directory,
-  postgresql_log_directory,
+  postgresql_log_directory
 ].each do |dir|
   directory dir do
     recursive true

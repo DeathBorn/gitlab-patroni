@@ -7,7 +7,7 @@ class AddressDetector
   end
 
   def ipaddress
-    @ip ||= interface['addresses'].detect { |_k, v| v['family'] == 'inet' }.first
+    @ipaddress ||= interface['addresses'].detect { |_k, v| v['family'] == 'inet' }.first
   end
 
   private

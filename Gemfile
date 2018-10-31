@@ -8,8 +8,8 @@ group :test do
   gem 'kitchen-digitalocean', '~> 0.10'
   gem 'kitchen-inspec', '0.20'
   gem 'kitchen-transport-rsync', '~> 0.1'
-  gem 'test-kitchen', '~> 1.23'
   gem 'kitchen-vagrant'
+  gem 'test-kitchen', '~> 1.23'
 end
 
 group :ed25519 do
