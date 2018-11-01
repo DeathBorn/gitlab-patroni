@@ -11,6 +11,7 @@ source_url       'https://gitlab.com/gitlab-cookbooks/gitlab-patroni'
 
 supports 'ubuntu', '= 16.04'
 
-depends 'poise-python'
-depends 'poise-service'
+depends 'postgresql', '6.1.3'
+depends 'poise-python', '~> 1.7.0'
+depends 'poise-service', '~> 1.5.2'
 depends 'gitlab_secrets'

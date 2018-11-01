@@ -15,7 +15,7 @@ SyslogIdentifier=patroni
 WorkingDirectory=~
 
 # Start the patroni process
-ExecStart=<%= node['gitlab-patroni']['install_directory'] %>/bin/patroni <%= node['gitlab-patroni']['data_directory'] %>/patroni.yml
+ExecStart=<%= node['gitlab-patroni']['patroni']['install_directory'] %>/bin/patroni <%= node['gitlab-patroni']['patroni']['config_directory'] %>/patroni.yml
 
 # Send HUP to reload from patroni.yml
 ExecReload=/bin/kill -s HUP $MAINPID
