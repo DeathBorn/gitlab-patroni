@@ -12,3 +12,9 @@ Style/TrailingCommaInArrayLiteral:
 
 Style/PercentLiteralDelimiters:
   Enabled: false
+
+Style/ModuleFunction:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
