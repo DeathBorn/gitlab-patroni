@@ -28,7 +28,7 @@ default['gitlab-patroni']['patroni']['pip_version'] = '18.0'
 default['gitlab-patroni']['patroni']['config_directory'] = '/var/opt/gitlab/patroni'
 default['gitlab-patroni']['patroni']['install_directory'] = '/opt/patroni'
 default['gitlab-patroni']['patroni']['log_directory'] = '/var/log/gitlab/patroni'
-default['gitlab-patroni']['patroni']['bind_interface'] = 'enp0s8'
+default['gitlab-patroni']['patroni']['bind_interface'] = 'lo'
 
 default['gitlab-patroni']['patroni']['users']['superuser']['username'] = 'gitlab-superuser'
 default['gitlab-patroni']['patroni']['users']['superuser']['password'] = 'in-vault'
