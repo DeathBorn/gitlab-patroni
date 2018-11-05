@@ -1,0 +1,56 @@
+---
+scope: pg-ha-cluster
+name: chefspec
+restapi:
+  listen: 0.0.0.0:8009
+  connect_address: 127.0.0.1:8009
+consul:
+  host: 127.0.0.1:8500
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        wal_level: replica
+        hot_standby: 'on'
+        wal_keep_segments: 8
+        max_wal_senders: 5
+        max_replication_slots: 5
+        checkpoint_timeout: 30
+  initdb:
+  - encoding: UTF8
+  - locale: C.UTF-8
+  pg_hba: []
+  users:
+    gitlab-superuser:
+      password: superuser-password
+      options:
+      - createrole
+      - createdb
+    gitlab-replicator:
+      password: replication-password
+      options:
+      - replication
+postgresql:
+  data_dir: "/var/opt/gitlab/postgresql/data"
+  config_dir: "/var/opt/gitlab/postgresql"
+  bin_dir: "/usr/lib/postgresql/9.6/bin"
+  listen: 0.0.0.0:5433
+  parameters:
+    port: 5433
+    ssl: 'off'
+    ssl_ciphers: HIGH:MEDIUM:+3DES:!aNULL:!SSLv3:!TLSv1
+    log_destination: syslog
+  authentication:
+    superuser:
+      username: gitlab-superuser
+      password: superuser-password
+    replication:
+      username: gitlab-replicator
+      password: replication-password
+  connect_address: 127.0.0.1:5433

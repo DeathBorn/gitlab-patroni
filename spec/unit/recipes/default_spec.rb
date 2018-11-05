@@ -4,17 +4,130 @@
 # Copyright:: 2018, GitLab B.V., MIT.
 
 require 'spec_helper'
+require 'chef-vault/test_fixtures'
 
 describe 'gitlab-patroni::default' do
-  context 'when all attributes are default, on Ubuntu 16.04' do
-    let(:chef_run) do
-      ChefSpec::ServerRunner.new(platform: 'ubuntu',
-                                 version: '16.04')
-                            .converge(described_recipe)
+  include ChefVault::TestFixtures.rspec_shared_context
+
+  let(:chef_run) do
+    ChefSpec::ServerRunner.new do |node|
+      node.normal['etc']['passwd'] = {}
+    end.converge(described_recipe)
+  end
+
+  before do
+    mock_secrets_path = 'spec/fixtures/secrets.json'
+    secrets           = JSON.parse(File.read(mock_secrets_path))
+
+    expect_any_instance_of(Chef::Recipe).to receive(:get_secrets)
+      .with('dummy', { 'path' => 'gitlab-gstg-secrets/gitlab-patroni', 'item' => 'gstg.enc' }, 'ring' => 'gitlab-secrets', 'key' => 'gstg', 'location' => 'global')
+      .and_return(secrets)
+  end
+
+  describe 'PostgreSQL' do
+    it 'creates PostgreSQL config directory' do
+      expect(chef_run).to create_directory('/var/opt/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
     end
 
-    it 'converges succesfully' do
-      expect { chef_run }.to_not raise_error
+    describe 'PostgreSQL user' do
+      context 'when the users exists' do
+        let(:chef_run) do
+          ChefSpec::ServerRunner.new do |node|
+            node.normal['etc']['passwd']['postgres'] = {}
+          end.converge(described_recipe)
+        end
+
+        it 'does not create the user' do
+          expect(chef_run).not_to create_user('postgres')
+        end
+      end
+
+      context 'when the users does not exist' do
+        it 'creates the user' do
+          expect(chef_run).to create_user('postgres').with(manage_home: true, home: '/var/opt/gitlab/postgresql')
+        end
+      end
+    end
+
+    it 'stops and disables postgresql service' do
+      expect(chef_run).to stop_service('postgresql')
+      expect(chef_run).to disable_service('postgresql')
+    end
+
+    it 'creates PostgreSQL certificate files' do
+      ssl_cacert_content = "GlobalSign Root CA\n==================\n-----BEGIN CERTIFICATE-----\nCA Root Certificates-----END CERTIFICATE-----"
+      ssl_cert_content = "-----BEGIN CERTIFICATE-----\nThis is the certificate\n-----END CERTIFICATE-----\n"
+      ssl_key_content = "-----BEGIN RSA PRIVATE KEY-----\nThis is the private key-----END RSA PRIVATE KEY-----\n"
+
+      expect(chef_run).to create_file('/var/opt/gitlab/postgresql/cacert.pem').with(
+        content: ssl_cacert_content, mode: '0600', owner: 'postgres', group: 'postgres', sensitive: true
+      )
+      expect(chef_run).to create_file('/var/opt/gitlab/postgresql/server.crt').with(
+        content: ssl_cert_content, mode: '0600', owner: 'postgres', group: 'postgres', sensitive: true
+      )
+      expect(chef_run).to create_file('/var/opt/gitlab/postgresql/server.key').with(
+        content: ssl_key_content, mode: '0600', owner: 'postgres', group: 'postgres', sensitive: true
+      )
+    end
+  end
+
+  describe 'Patroni' do
+    it 'updates apt' do
+      expect(chef_run).to periodic_apt_update('apt update')
+    end
+
+    it 'installs Python runtime' do
+      expect(chef_run).to install_python_runtime('3').with(pip_version: '18.0')
+    end
+
+    it 'creates Patroni virtualenv' do
+      expect(chef_run).to create_python_virtualenv('/opt/patroni').with(pip_version: '18.0')
+    end
+
+    it 'installs Patroni' do
+      expect(chef_run).to install_python_package('patroni[consul]').with(version: '1.5.0')
+    end
+
+    it 'creates Patroni config directory' do
+      expect(chef_run).to create_directory('/var/opt/gitlab/patroni').with(owner: 'postgres', group: 'postgres')
+    end
+
+    it 'creates PostgreSQL config directory' do
+      expect(chef_run).to create_directory('/var/opt/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
+    end
+
+    it 'creates postgresql.conf' do
+      expect(chef_run).to create_file('/var/opt/gitlab/postgresql/postgresql.conf').with(owner: 'postgres', group: 'postgres', content: nil)
+    end
+
+    it 'creates patroni.yml' do
+      config_path    = '/var/opt/gitlab/patroni/patroni.yml'
+      patroni_config = File.read('spec/fixtures/patroni.yml')
+
+      expect(chef_run).to create_file(config_path).with(owner: 'postgres', group: 'postgres', content: patroni_config)
+      expect(chef_run.file(config_path)).to notify('poise_service[patroni]').to(:reload).immediately
+    end
+
+    it 'creates Patroni log directory' do
+      expect(chef_run).to create_directory('/var/log/gitlab/patroni').with(owner: 'syslog', group: 'syslog')
+    end
+
+    it 'creates PostgreSQL log directory' do
+      expect(chef_run).to create_directory('/var/log/gitlab/postgresql').with(owner: 'syslog', group: 'syslog')
+    end
+
+    it 'creates Patroni rsyslog config' do
+      config_path = '/etc/rsyslog.d/50-patroni.conf'
+
+      expect(chef_run).to render_file(config_path).with_content(start_with("if $programname == 'patroni' then /var/log/gitlab/patroni/patroni.log"))
+      expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+    end
+
+    it 'creates PostgreSQL rsyslog config' do
+      config_path = '/etc/rsyslog.d/51-postgresql.conf'
+
+      expect(chef_run).to render_file(config_path).with_content(start_with("if $programname == 'postgres' then /var/log/gitlab/postgresql/postgres.log"))
+      expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
     end
   end
 end
