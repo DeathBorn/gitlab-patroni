@@ -29,6 +29,40 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to create_directory('/var/opt/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
     end
 
+    it 'creates postgresql.conf if it is missing' do
+      conf_path    = '/var/opt/gitlab/postgresql/postgresql.conf'
+      conf_content = File.read('spec/fixtures/postgresql.conf')
+
+      expect(chef_run).to create_if_missing_cookbook_file(conf_path).with(owner: 'postgres', group: 'postgres')
+      expect(chef_run).to render_file(conf_path).with_content(conf_content)
+    end
+
+    describe 'postgresql.base.conf' do
+      let(:conf_path) { '/var/opt/gitlab/postgresql/postgresql.base.conf' }
+
+      context 'when it already exists' do
+        before do
+          allow(File).to receive(:exist?).and_call_original
+          allow(File).to receive(:exist?).with(conf_path).and_return(true)
+        end
+
+        it 'updates the file' do
+          expect(chef_run).to create_cookbook_file(conf_path)
+        end
+      end
+
+      context 'when it does not exist' do
+        before do
+          allow(File).to receive(:exist?).and_call_original
+          allow(File).to receive(:exist?).with(conf_path).and_return(false)
+        end
+
+        it 'does not create the file' do
+          expect(chef_run).not_to render_file(conf_path)
+        end
+      end
+    end
+
     describe 'PostgreSQL user' do
       context 'when the users exists' do
         let(:chef_run) do
@@ -90,14 +124,6 @@ describe 'gitlab-patroni::default' do
 
     it 'creates Patroni config directory' do
       expect(chef_run).to create_directory('/var/opt/gitlab/patroni').with(owner: 'postgres', group: 'postgres')
-    end
-
-    it 'creates PostgreSQL config directory' do
-      expect(chef_run).to create_directory('/var/opt/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
-    end
-
-    it 'creates postgresql.conf' do
-      expect(chef_run).to create_file('/var/opt/gitlab/postgresql/postgresql.conf').with(owner: 'postgres', group: 'postgres', content: nil)
     end
 
     it 'creates patroni.yml' do
