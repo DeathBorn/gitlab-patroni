@@ -17,12 +17,31 @@ user postgresql_helper.postgresql_user do
   not_if { node['etc']['passwd'].key?(postgresql_helper.postgresql_user) }
 end
 
+directory postgresql_config_directory do
+  owner postgresql_helper.postgresql_user
+  group postgresql_helper.postgresql_group
+end
+
 postgresql_server_install 'postgresql' do
   version node['gitlab-patroni']['postgresql']['version']
 end
 
 service 'postgresql' do
   action %i[stop disable]
+end
+
+cookbook_file "#{postgresql_config_directory}/postgresql.conf" do
+  source File.basename(name)
+  owner postgresql_helper.postgresql_user
+  group postgresql_helper.postgresql_group
+  # Patroni expects postgresql.conf to exist to move it to postgresql.base.conf,
+  # managing postgresql.conf by itself, so we don't want to override it.
+  action :create_if_missing
+end
+
+cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
+  source 'postgresql.conf'
+  only_if { File.exist?(name) }
 end
 
 file "#{postgresql_config_directory}/cacert.pem" do

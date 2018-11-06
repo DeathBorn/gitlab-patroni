@@ -9,7 +9,6 @@ config_directory            = node['gitlab-patroni']['patroni']['config_director
 install_directory           = node['gitlab-patroni']['patroni']['install_directory']
 log_directory               = node['gitlab-patroni']['patroni']['log_directory']
 postgresql_log_directory    = node['gitlab-patroni']['postgresql']['log_directory']
-postgresql_config_directory = node['gitlab-patroni']['patroni']['config']['postgresql']['config_dir']
 patroni_config_path         = "#{config_directory}/patroni.yml"
 
 apt_update 'apt update'
@@ -26,19 +25,8 @@ python_package 'patroni[consul]' do
   version node['gitlab-patroni']['patroni']['version']
 end
 
-[
-  config_directory,
-  postgresql_config_directory
-].each do |dir|
-  directory dir do
-    recursive true
-    owner postgresql_helper.postgresql_user
-    group postgresql_helper.postgresql_group
-  end
-end
-
-# Patroni crashes if it didn't find a postgresql.conf to rename it, so we provide an empty one!
-file "#{postgresql_config_directory}/postgresql.conf" do
+directory config_directory do
+  recursive true
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
 end
