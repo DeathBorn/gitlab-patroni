@@ -35,7 +35,16 @@ file patroni_config_path do
   content YAML.dump(node['gitlab-patroni']['patroni']['config'].to_hash)
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
-  notifies :reload, 'poise_service[patroni]', :immediately
+  notifies :reload, 'poise_service[patroni]', :delayed
+end
+
+execute 'update bootstrap config' do
+  command <<-CMD
+#{install_directory}/bin/patronictl -c #{patroni_config_path} edit-config --replace - <<-YML
+#{YAML.dump(node['gitlab-patroni']['patroni']['config']['bootstrap']['dcs'].to_hash)}
+YML
+  CMD
+  only_if 'systemctl status patroni'
 end
 
 poise_service 'patroni' do

@@ -21,3 +21,6 @@ Metrics/AbcSize:
 
 Metrics/BlockLength:
   Enabled: false
+
+Layout/IndentHeredoc:
+  Enabled: false

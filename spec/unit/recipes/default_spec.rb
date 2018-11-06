@@ -22,6 +22,8 @@ describe 'gitlab-patroni::default' do
     expect_any_instance_of(Chef::Recipe).to receive(:get_secrets)
       .with('dummy', { 'path' => 'gitlab-gstg-secrets/gitlab-patroni', 'item' => 'gstg.enc' }, 'ring' => 'gitlab-secrets', 'key' => 'gstg', 'location' => 'global')
       .and_return(secrets)
+
+    stub_command('systemctl status patroni').and_return(true)
   end
 
   describe 'PostgreSQL' do
@@ -131,7 +133,46 @@ describe 'gitlab-patroni::default' do
       patroni_config = File.read('spec/fixtures/patroni.yml')
 
       expect(chef_run).to create_file(config_path).with(owner: 'postgres', group: 'postgres', content: patroni_config)
-      expect(chef_run.file(config_path)).to notify('poise_service[patroni]').to(:reload).immediately
+      expect(chef_run.file(config_path)).to notify('poise_service[patroni]').to(:reload).delayed
+    end
+
+    describe 'updating bootstrap config' do
+      context 'patroni service is not running' do
+        before do
+          stub_command('systemctl status patroni').and_return(false)
+        end
+
+        it 'does not update the config' do
+          expect(chef_run).not_to run_execute('update bootstrap config')
+        end
+      end
+
+      context 'patroni service is running' do
+        it 'updates the config' do
+          command = <<-CMD
+/opt/patroni/bin/patronictl -c /var/opt/gitlab/patroni/patroni.yml edit-config --replace - <<-YML
+---
+ttl: 30
+loop_wait: 10
+retry_timeout: 10
+maximum_lag_on_failover: 1048576
+postgresql:
+  use_pg_rewind: true
+  use_slots: true
+  parameters:
+    wal_level: replica
+    hot_standby: 'on'
+    wal_keep_segments: 8
+    max_wal_senders: 5
+    max_replication_slots: 5
+    checkpoint_timeout: 30
+
+YML
+          CMD
+
+          expect(chef_run).to run_execute('update bootstrap config').with(command: command)
+        end
+      end
     end
 
     it 'creates Patroni log directory' do
