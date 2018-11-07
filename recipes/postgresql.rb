@@ -22,9 +22,18 @@ directory postgresql_config_directory do
   group postgresql_helper.postgresql_group
 end
 
-postgresql_server_install 'postgresql' do
-  version node['gitlab-patroni']['postgresql']['version']
+# Adapted from the postgresql cookbook
+package 'apt-transport-https'
+
+apt_repository 'postgresql' do
+  uri          'https://download.postgresql.org/pub/repos/apt/'
+  components   ['main', postgresql_helper.version]
+  distribution "#{node['lsb']['codename']}-pgdg"
+  key 'https://download.postgresql.org/pub/repos/apt/ACCC4CF8.asc'
+  cache_rebuild true
 end
+
+package "postgresql-#{postgresql_helper.version}"
 
 service 'postgresql' do
   action %i[stop disable]
