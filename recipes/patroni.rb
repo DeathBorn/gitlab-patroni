@@ -40,7 +40,7 @@ end
 
 execute 'update bootstrap config' do
   command <<-CMD
-#{install_directory}/bin/patronictl -c #{patroni_config_path} edit-config --replace - <<-YML
+#{install_directory}/bin/patronictl -c #{patroni_config_path} edit-config --force --replace - <<-YML
 #{YAML.dump(node['gitlab-patroni']['patroni']['config']['bootstrap']['dcs'].to_hash)}
 YML
   CMD

@@ -150,7 +150,7 @@ describe 'gitlab-patroni::default' do
       context 'patroni service is running' do
         it 'updates the config' do
           command = <<-CMD
-/opt/patroni/bin/patronictl -c /var/opt/gitlab/patroni/patroni.yml edit-config --replace - <<-YML
+/opt/patroni/bin/patronictl -c /var/opt/gitlab/patroni/patroni.yml edit-config --force --replace - <<-YML
 ---
 ttl: 30
 loop_wait: 10
