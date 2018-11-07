@@ -13,5 +13,9 @@ module GitlabPatroni
     def postgresql_group
       node['gitlab-patroni']['user']
     end
+
+    def postgresql_port
+      node['gitlab-patroni']['postgresql']['parameters']['port']
+    end
   end
 end

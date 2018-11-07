@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cd /tmp; exec chpst -U <%= @postgresql_user %> <%= @install_directory %>/bin/patronictl -c <%= @config_path %> "$@"

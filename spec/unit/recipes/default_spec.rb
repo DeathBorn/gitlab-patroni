@@ -124,6 +124,10 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to install_python_package('patroni[consul]').with(version: '1.5.0')
     end
 
+    it 'installs runit' do
+      expect(chef_run).to install_package('runit')
+    end
+
     it 'creates Patroni config directory' do
       expect(chef_run).to create_directory('/var/opt/gitlab/patroni').with(owner: 'postgres', group: 'postgres')
     end
@@ -195,6 +199,44 @@ YML
 
       expect(chef_run).to render_file(config_path).with_content(start_with("if $programname == 'postgres' then /var/log/gitlab/postgresql/postgres.log"))
       expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+    end
+
+    it 'creates .pgpass' do
+      pgpass_path    = '/var/opt/gitlab/postgresql/.pgpass'
+      pgpass_content = 'localhost:5433:*:gitlab-superuser:superuser-password'
+
+      expect(chef_run).to create_template(pgpass_path).with(owner: 'postgres', group: 'postgres', mode: '0600')
+      expect(chef_run).to render_file(pgpass_path).with_content(pgpass_content)
+    end
+
+    it 'creates gitlab-psql' do
+      gitlab_psql_path    = '/usr/local/bin/gitlab-psql'
+      gitlab_psql_content = <<-STR
+#!/bin/sh
+
+if [ "$(id -n -u)" = "postgres" ] ; then
+  privilege_drop=''
+else
+  privilege_drop="-u postgres"
+fi
+
+cd /tmp; exec chpst ${privilege_drop} -U postgres psql -p 5433 -h localhost -U gitlab-superuser -d gitlabhq_production "$@"
+      STR
+
+      expect(chef_run).to create_template(gitlab_psql_path).with(mode: '0777')
+      expect(chef_run).to render_file(gitlab_psql_path).with_content(gitlab_psql_content)
+    end
+
+    it 'creates gitlab-patronictl' do
+      gitlab_patronictl_path    = '/usr/local/bin/gitlab-patronictl'
+      gitlab_patronictl_content = <<-STR
+#!/bin/sh
+
+cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/patroni/patroni.yml "$@"
+      STR
+
+      expect(chef_run).to create_template(gitlab_patronictl_path).with(mode: '0777')
+      expect(chef_run).to render_file(gitlab_patronictl_path).with_content(gitlab_patronictl_content)
     end
   end
 end
