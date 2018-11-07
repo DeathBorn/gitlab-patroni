@@ -24,3 +24,6 @@ Metrics/BlockLength:
 
 Layout/IndentHeredoc:
   Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: false

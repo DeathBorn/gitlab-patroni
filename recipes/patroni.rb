@@ -8,7 +8,9 @@ postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
 config_directory            = node['gitlab-patroni']['patroni']['config_directory']
 install_directory           = node['gitlab-patroni']['patroni']['install_directory']
 log_directory               = node['gitlab-patroni']['patroni']['log_directory']
+log_path                    = "#{log_directory}/patroni.log"
 postgresql_log_directory    = node['gitlab-patroni']['postgresql']['log_directory']
+postgresql_log_path         = "#{postgresql_log_directory}/postgres.log"
 postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superuser']['username']
 patroni_config_path         = "#{config_directory}/patroni.yml"
 
@@ -72,14 +74,20 @@ end
 end
 
 template '/etc/rsyslog.d/50-patroni.conf' do
-  source '50-patroni.conf.erb'
-  variables(log_directory: log_directory)
+  source 'rsyslog.conf.erb'
+  variables(
+    program_name: 'patroni',
+    log_path: log_path
+  )
   notifies :restart, 'service[rsyslog]', :delayed
 end
 
 template '/etc/rsyslog.d/51-postgresql.conf' do
-  source '51-postgresql.conf.erb'
-  variables(log_directory: postgresql_log_directory)
+  source 'rsyslog.conf.erb'
+  variables(
+    program_name: 'postgres',
+    log_path: postgresql_log_path
+  )
   notifies :restart, 'service[rsyslog]', :delayed
 end
 
@@ -117,4 +125,18 @@ template '/usr/local/bin/gitlab-patronictl' do
     config_path: patroni_config_path
   )
   mode '0777'
+end
+
+include_recipe 'logrotate::default'
+
+{
+  patroni: log_path,
+  postgresql: postgresql_log_path
+}.each do |app, app_path|
+  logrotate_app app do
+    path app_path
+    options %w(missingok compress delaycompress notifempty)
+    rotate 7
+    frequency 'daily'
+  end
 end
