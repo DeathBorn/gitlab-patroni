@@ -17,5 +17,9 @@ module GitlabPatroni
     def postgresql_port
       node['gitlab-patroni']['postgresql']['parameters']['port']
     end
+
+    def version
+      node['gitlab-patroni']['postgresql']['version']
+    end
   end
 end

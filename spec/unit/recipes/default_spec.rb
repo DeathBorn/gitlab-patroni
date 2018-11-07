@@ -31,6 +31,24 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to create_directory('/var/opt/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
     end
 
+    it 'installs apt-transport-https' do
+      expect(chef_run).to install_package('apt-transport-https')
+    end
+
+    it 'adds PostgreSQL APT repository' do
+      expect(chef_run).to add_apt_repository('postgresql').with(
+        uri: 'https://download.postgresql.org/pub/repos/apt/',
+        components: ['main', '9.6'],
+        distribution: 'xenial-pgdg',
+        key: ['https://download.postgresql.org/pub/repos/apt/ACCC4CF8.asc'],
+        cache_rebuild: true
+      )
+    end
+
+    it 'installs postgresql' do
+      expect(chef_run).to install_package('postgresql-9.6')
+    end
+
     it 'creates postgresql.conf if it is missing' do
       conf_path    = '/var/opt/gitlab/postgresql/postgresql.conf'
       conf_content = File.read('spec/fixtures/postgresql.conf')
