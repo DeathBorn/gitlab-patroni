@@ -238,5 +238,23 @@ cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/p
       expect(chef_run).to create_template(gitlab_patronictl_path).with(mode: '0777')
       expect(chef_run).to render_file(gitlab_patronictl_path).with_content(gitlab_patronictl_content)
     end
+
+    it 'rotates Patroni logs' do
+      expect(chef_run).to enable_logrotate_app('patroni').with(
+        path: '/var/log/gitlab/patroni/patroni.log',
+        options: %w(missingok compress delaycompress notifempty),
+        rotate: 7,
+        frequency: 'daily'
+      )
+    end
+
+    it 'rotates PostgreSQL logs' do
+      expect(chef_run).to enable_logrotate_app('postgresql').with(
+        path: '/var/log/gitlab/postgresql/postgres.log',
+        options: %w(missingok compress delaycompress notifempty),
+        rotate: 7,
+        frequency: 'daily'
+      )
+    end
   end
 end

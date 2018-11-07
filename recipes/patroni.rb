@@ -126,3 +126,17 @@ template '/usr/local/bin/gitlab-patronictl' do
   )
   mode '0777'
 end
+
+include_recipe 'logrotate::default'
+
+{
+  patroni: log_path,
+  postgresql: postgresql_log_path
+}.each do |app, app_path|
+  logrotate_app app do
+    path app_path
+    options %w(missingok compress delaycompress notifempty)
+    rotate 7
+    frequency 'daily'
+  end
+end
