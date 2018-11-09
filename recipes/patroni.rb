@@ -13,6 +13,7 @@ postgresql_log_directory    = node['gitlab-patroni']['postgresql']['log_director
 postgresql_log_path         = "#{postgresql_log_directory}/postgres.log"
 postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superuser']['username']
 patroni_config_path         = "#{config_directory}/patroni.yml"
+gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
 
 apt_update 'apt update'
 
@@ -36,6 +37,28 @@ directory config_directory do
   group postgresql_helper.postgresql_group
 end
 
+template '/usr/local/bin/gitlab-psql' do
+  source 'gitlab-psql.erb'
+  variables(
+    postgresql_user: postgresql_helper.postgresql_user,
+    port: postgresql_helper.postgresql_port,
+    host: 'localhost',
+    superuser: postgresql_superuser,
+    db_name: 'gitlabhq_production'
+  )
+  mode '0777'
+end
+
+template gitlab_patronictl_path do
+  source 'gitlab-patronictl.erb'
+  variables(
+    postgresql_user: postgresql_helper.postgresql_user,
+    install_directory: install_directory,
+    config_path: patroni_config_path
+  )
+  mode '0777'
+end
+
 file patroni_config_path do
   content YAML.dump(node['gitlab-patroni']['patroni']['config'].to_hash)
   owner postgresql_helper.postgresql_user
@@ -49,7 +72,8 @@ execute 'update bootstrap config' do
 #{YAML.dump(node['gitlab-patroni']['patroni']['config']['bootstrap']['dcs'].to_hash)}
 YML
   CMD
-  only_if 'systemctl status patroni'
+  # patronictl edit-config fails (for some reason) if the state is not in a running state
+  only_if "systemctl status patroni && #{gitlab_patronictl_path} list | grep #{node.name} | grep running"
 end
 
 poise_service 'patroni' do
@@ -103,28 +127,6 @@ template "#{node['gitlab-patroni']['postgresql']['config_directory']}/.pgpass" d
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
   mode '0600'
-end
-
-template '/usr/local/bin/gitlab-psql' do
-  source 'gitlab-psql.erb'
-  variables(
-    postgresql_user: postgresql_helper.postgresql_user,
-    port: postgresql_helper.postgresql_port,
-    host: 'localhost',
-    superuser: postgresql_superuser,
-    db_name: 'gitlabhq_production'
-  )
-  mode '0777'
-end
-
-template '/usr/local/bin/gitlab-patronictl' do
-  source 'gitlab-patronictl.erb'
-  variables(
-    postgresql_user: postgresql_helper.postgresql_user,
-    install_directory: install_directory,
-    config_path: patroni_config_path
-  )
-  mode '0777'
 end
 
 include_recipe 'logrotate::default'
