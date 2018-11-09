@@ -14,6 +14,7 @@ describe 'gitlab-patroni::default' do
       node.normal['etc']['passwd'] = {}
     end.converge(described_recipe)
   end
+  let(:guard_command) { 'systemctl status patroni && /usr/local/bin/gitlab-patronictl list | grep chefspec | grep running' }
 
   before do
     mock_secrets_path = 'spec/fixtures/secrets.json'
@@ -23,7 +24,7 @@ describe 'gitlab-patroni::default' do
       .with('dummy', { 'path' => 'gitlab-gstg-secrets/gitlab-patroni', 'item' => 'gstg.enc' }, 'ring' => 'gitlab-secrets', 'key' => 'gstg', 'location' => 'global')
       .and_return(secrets)
 
-    stub_command('systemctl status patroni').and_return(true)
+    stub_command(guard_command).and_return(true)
   end
 
   describe 'PostgreSQL' do
@@ -159,9 +160,9 @@ describe 'gitlab-patroni::default' do
     end
 
     describe 'updating bootstrap config' do
-      context 'patroni service is not running' do
+      context 'patroni service is not running or is not in a running state' do
         before do
-          stub_command('systemctl status patroni').and_return(false)
+          stub_command(guard_command).and_return(false)
         end
 
         it 'does not update the config' do
