@@ -124,6 +124,18 @@ describe 'gitlab-patroni::default' do
         content: ssl_key_content, mode: '0600', owner: 'postgres', group: 'postgres', sensitive: true
       )
     end
+
+    it 'sets shmmax kernel parameter' do
+      expect(chef_run).to apply_sysctl_param('kernel.shmmax').with(value: '123480309760')
+    end
+
+    it 'sets shmall kernel parameter' do
+      expect(chef_run).to apply_sysctl_param('kernel.shmall').with(value: '30146560')
+    end
+
+    it 'sets sem kernel parameter' do
+      expect(chef_run).to apply_sysctl_param('kernel.sem').with(value: '250 100000 32 1024')
+    end
   end
 
   describe 'Patroni' do

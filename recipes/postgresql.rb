@@ -76,3 +76,21 @@ file "#{postgresql_config_directory}/server.key" do
   group postgresql_helper.postgresql_group
   sensitive true
 end
+
+sysctl_param 'kernel.shmmax' do
+  value node['gitlab-patroni']['postgresql']['shmmax']
+end
+
+sysctl_param 'kernel.shmall' do
+  value node['gitlab-patroni']['postgresql']['shmall']
+end
+
+sem = [
+  node['gitlab-patroni']['postgresql']['semmsl'],
+  node['gitlab-patroni']['postgresql']['semmns'],
+  node['gitlab-patroni']['postgresql']['semopm'],
+  node['gitlab-patroni']['postgresql']['semmni'],
+].join(' ')
+sysctl_param 'kernel.sem' do
+  value sem
+end
