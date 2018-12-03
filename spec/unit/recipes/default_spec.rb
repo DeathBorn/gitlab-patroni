@@ -232,6 +232,13 @@ YML
       expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
     end
 
+    it 'creates WAL-E rsyslog config' do
+      config_path = '/etc/rsyslog.d/52-wale.conf'
+
+      expect(chef_run).to render_file(config_path).with_content(start_with("if $programname contains 'wal_e' then /var/log/gitlab/postgresql/postgresql.log"))
+      expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+    end
+
     it 'creates .pgpass' do
       pgpass_path    = '/var/opt/gitlab/postgresql/.pgpass'
       pgpass_content = 'localhost:5433:*:gitlab-superuser:superuser-password'

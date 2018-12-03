@@ -115,6 +115,14 @@ template '/etc/rsyslog.d/51-postgresql.conf' do
   notifies :restart, 'service[rsyslog]', :delayed
 end
 
+template '/etc/rsyslog.d/52-wale.conf' do
+  source 'wale-rsyslog.conf.erb'
+  variables(
+    log_path: postgresql_log_path
+  )
+  notifies :restart, 'service[rsyslog]', :delayed
+end
+
 template "#{node['gitlab-patroni']['postgresql']['config_directory']}/.pgpass" do
   source 'pgpass.erb'
   variables(
