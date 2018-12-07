@@ -235,7 +235,7 @@ YML
     it 'creates WAL-E rsyslog config' do
       config_path = '/etc/rsyslog.d/52-wale.conf'
 
-      expect(chef_run).to render_file(config_path).with_content("if $programname contains 'wal_e' then /var/log/gitlab/postgresql/postgresql.log;svlogd_format")
+      expect(chef_run).to render_file(config_path).with_content("if $programname contains 'wal_e' then /var/log/gitlab/postgresql/wale.log;svlogd_format")
       expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
     end
 
@@ -289,6 +289,15 @@ cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/p
     it 'rotates PostgreSQL logs' do
       expect(chef_run).to enable_logrotate_app('postgresql').with(
         path: '/var/log/gitlab/postgresql/postgresql.log',
+        options: %w(missingok compress delaycompress notifempty),
+        rotate: 7,
+        frequency: 'daily'
+      )
+    end
+
+    it 'rotates WAL-E logs' do
+      expect(chef_run).to enable_logrotate_app('wale').with(
+        path: '/var/log/gitlab/postgresql/wale.log',
         options: %w(missingok compress delaycompress notifempty),
         rotate: 7,
         frequency: 'daily'

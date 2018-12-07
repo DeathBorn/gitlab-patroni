@@ -14,6 +14,7 @@ postgresql_log_path         = "#{postgresql_log_directory}/postgresql.log"
 postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superuser']['username']
 patroni_config_path         = "#{config_directory}/patroni.yml"
 gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
+wale_log_path               = "#{postgresql_log_directory}/wale.log"
 
 apt_update 'apt update'
 
@@ -118,7 +119,7 @@ end
 template '/etc/rsyslog.d/52-wale.conf' do
   source 'wale-rsyslog.conf.erb'
   variables(
-    log_path: postgresql_log_path
+    log_path: wale_log_path
   )
   notifies :restart, 'service[rsyslog]', :delayed
 end
@@ -141,7 +142,8 @@ include_recipe 'logrotate::default'
 
 {
   patroni: log_path,
-  postgresql: postgresql_log_path
+  postgresql: postgresql_log_path,
+  wale: wale_log_path
 }.each do |app, app_path|
   logrotate_app app do
     path app_path
