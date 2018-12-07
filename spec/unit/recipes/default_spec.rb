@@ -221,14 +221,14 @@ YML
     it 'creates Patroni rsyslog config' do
       config_path = '/etc/rsyslog.d/50-patroni.conf'
 
-      expect(chef_run).to render_file(config_path).with_content(start_with("if $programname == 'patroni' then /var/log/gitlab/patroni/patroni.log"))
+      expect(chef_run).to render_file(config_path).with_content("if $programname == 'patroni' then /var/log/gitlab/patroni/patroni.log;svlogd_format")
       expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
     end
 
     it 'creates PostgreSQL rsyslog config' do
       config_path = '/etc/rsyslog.d/51-postgresql.conf'
 
-      expect(chef_run).to render_file(config_path).with_content(start_with("if $programname == 'postgres' then /var/log/gitlab/postgresql/postgresql.log"))
+      expect(chef_run).to render_file(config_path).with_content("if $programname == 'postgres' then /var/log/gitlab/postgresql/postgresql.log;svlogd_format")
       expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
     end
 
