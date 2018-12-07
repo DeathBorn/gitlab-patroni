@@ -1,2 +1,5 @@
-if $programname contains 'wal_e' then <%= @log_path %>
+# Same as RSYSLOG_TraditionalFileFormat format with timestamp changed to look like svlogd timestamp
+$template svlogd_format,"%timereported:::date-year%-%timereported:::date-month%-%timereported:::date-day%_%timereported:::date-hour%:%timereported:::date-minute%:%timereported:::date-second% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp% %msg:::drop-last-lf%\n"
+
+if $programname contains 'wal_e' then <%= @log_path %>;svlogd_format
 & stop
