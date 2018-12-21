@@ -27,3 +27,6 @@ Layout/IndentHeredoc:
 
 Style/TrailingCommaInHashLiteral:
   Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
