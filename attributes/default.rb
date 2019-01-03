@@ -36,6 +36,7 @@ default['gitlab-patroni']['patroni']['install_directory'] = '/opt/patroni'
 default['gitlab-patroni']['patroni']['log_directory'] = '/var/log/gitlab/patroni'
 default['gitlab-patroni']['patroni']['bind_interface'] = 'lo'
 
+default['gitlab-patroni']['patroni']['consul']['check_interval'] = '10s'
 default['gitlab-patroni']['patroni']['consul']['extra_checks'] = []
 
 default['gitlab-patroni']['patroni']['users']['superuser']['username'] = 'gitlab-superuser'
