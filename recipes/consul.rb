@@ -4,6 +4,8 @@
 #
 # Copyright 2018, GitLab Inc.
 
+check_interval = node['gitlab-patroni']['patroni']['consul']['check_interval']
+
 service 'consul' do
   supports [:reload]
 end
@@ -21,7 +23,7 @@ consul_definition 'patroni' do
         checks: [
           {
             http: "http://#{node['gitlab-patroni']['patroni']['config']['restapi']['listen']}/master",
-            interval: '10s'
+            interval: check_interval
           }
         ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks'])
       },
@@ -34,7 +36,7 @@ consul_definition 'patroni' do
         checks: [
           {
             http: "http://#{node['gitlab-patroni']['patroni']['config']['restapi']['listen']}/replica",
-            interval: '10s'
+            interval: check_interval
           }
         ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks'])
       }
