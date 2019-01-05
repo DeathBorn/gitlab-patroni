@@ -25,7 +25,7 @@ consul_definition 'patroni' do
             http: "http://#{node['gitlab-patroni']['patroni']['config']['restapi']['listen']}/master",
             interval: check_interval
           }
-        ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks'])
+        ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks']['master'])
       },
       {
         id: 'patroni-replica',
@@ -38,7 +38,7 @@ consul_definition 'patroni' do
             http: "http://#{node['gitlab-patroni']['patroni']['config']['restapi']['listen']}/replica",
             interval: check_interval
           }
-        ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks'])
+        ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks']['replica'])
       }
     ]
   )
