@@ -50,6 +50,10 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to install_package('postgresql-9.6')
     end
 
+    it 'installs pg_repack extension' do
+      expect(chef_run).to install_package('postgresql-9.6-repack')
+    end
+
     it 'creates postgresql.conf if it is missing' do
       conf_path    = '/var/opt/gitlab/postgresql/postgresql.conf'
       conf_content = File.read('spec/fixtures/postgresql.conf')

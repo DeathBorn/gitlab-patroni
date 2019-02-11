@@ -34,6 +34,7 @@ apt_repository 'postgresql' do
 end
 
 package "postgresql-#{postgresql_helper.version}"
+package "postgresql-#{postgresql_helper.version}-repack"
 
 service 'postgresql' do
   action %i[stop disable]
