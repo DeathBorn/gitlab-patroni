@@ -141,7 +141,7 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to apply_sysctl_param('kernel.sem').with(value: '250 100000 32 1024')
     end
 
-    context 'creates scripts' do 
+    context 'creates scripts' do
       it 'creates scripts directory' do
         expect(chef_run).to create_directory('/var/opt/gitlab/postgresql/scripts').with(owner: 'postgres', group: 'postgres')
       end
@@ -150,7 +150,6 @@ describe 'gitlab-patroni::default' do
         expect(chef_run).to create_cookbook_file('/var/opt/gitlab/postgresql/scripts/wale-restore.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
       end
     end
-
   end
 
   describe 'Patroni' do
