@@ -16,6 +16,5 @@ include_recipe '::postgresql'
 include_recipe '::patroni'
 
 if node['gitlab-patroni']['patroni']['custom_scripts']
-	include_recipe '::custom_scripts'
+  include_recipe '::custom_scripts'
 end
-
