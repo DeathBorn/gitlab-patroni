@@ -73,3 +73,5 @@ default['gitlab-patroni']['patroni']['config']['bootstrap']['pg_hba'] = [
   # 'host replication gitlab-replicator 127.0.0.1/32 md5',
   # 'host replication gitlab-replicator 192.168.0.0/11 md5',
 ]
+
+default['gitlab-patroni']['patroni']['custom_scripts'] = false

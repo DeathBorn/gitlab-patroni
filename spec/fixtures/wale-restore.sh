@@ -6,9 +6,12 @@ while getopts ":-:" optchar; do
         datadir=* )
             DATA_DIR=${OPTARG#*=}
             ;;
+        restore_cmd=* )
+            RESTORE_CMD=${OPTARG#*=}
+            ;;
     esac
 done
 
-[[ -z $DATA_DIR ]] && exit 1
+[[ -z $DATA_DIR || -z $RESTORE_CMD ]] && exit 1
 
-/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch $DATA_DIR LATEST
+$RESTORE_CMD $DATA_DIR LATEST
