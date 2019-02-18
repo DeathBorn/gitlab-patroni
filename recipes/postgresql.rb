@@ -6,6 +6,7 @@
 
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
 postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
+scripts_directory = "#{postgresql_config_directory}/scripts"
 
 directory postgresql_config_directory do
   recursive true
@@ -94,4 +95,16 @@ sem = [
 ].join(' ')
 sysctl_param 'kernel.sem' do
   value sem
+end
+
+directory scripts_directory do
+  owner postgresql_helper.postgresql_user
+  group postgresql_helper.postgresql_group
+end
+
+cookbook_file "#{scripts_directory}/wale-restore.sh" do
+  source File.basename(name)
+  mode '0754'
+  owner postgresql_helper.postgresql_user
+  group postgresql_helper.postgresql_group
 end
