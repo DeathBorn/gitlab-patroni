@@ -38,6 +38,10 @@ directory config_directory do
   group postgresql_helper.postgresql_group
 end
 
+if node['gitlab-patroni']['patroni']['use_custom_scripts']
+  include_recipe '::custom_scripts'
+end
+
 template '/usr/local/bin/gitlab-psql' do
   source 'gitlab-psql.erb'
   variables(
