@@ -12,6 +12,9 @@ describe 'gitlab-patroni::default' do
   let(:chef_run) do
     ChefSpec::ServerRunner.new do |node|
       node.normal['etc']['passwd'] = {}
+      node.normal['gitlab-patroni']['patroni']['use_custom_scripts'] = true
+      node.normal['gitlab-patroni']['patroni']['config']['postgresql']['wal_e']['command'] = '/var/opt/gitlab/patroni/scripts/wale-restore.sh'
+      node.normal['gitlab-patroni']['patroni']['config']['postgresql']['wal_e']['restore_cmd'] = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch'
     end.converge(described_recipe)
   end
   let(:guard_command) { 'systemctl status patroni && /usr/local/bin/gitlab-patronictl list | grep chefspec | grep running' }
@@ -139,6 +142,16 @@ describe 'gitlab-patroni::default' do
 
     it 'sets sem kernel parameter' do
       expect(chef_run).to apply_sysctl_param('kernel.sem').with(value: '250 100000 32 1024')
+    end
+
+    context 'creates scripts' do
+      it 'creates scripts directory' do
+        expect(chef_run).to create_directory('/var/opt/gitlab/patroni/scripts').with(owner: 'postgres', group: 'postgres')
+      end
+
+      it 'creates wale-restore scripts' do
+        expect(chef_run).to create_cookbook_file('/var/opt/gitlab/patroni/scripts/wale-restore.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
+      end
     end
   end
 
