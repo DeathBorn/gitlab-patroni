@@ -35,6 +35,7 @@ default['gitlab-patroni']['patroni']['config_directory'] = '/var/opt/gitlab/patr
 default['gitlab-patroni']['patroni']['install_directory'] = '/opt/patroni'
 default['gitlab-patroni']['patroni']['log_directory'] = '/var/log/gitlab/patroni'
 default['gitlab-patroni']['patroni']['bind_interface'] = 'lo'
+default['gitlab-patroni']['patroni']['use_custom_scripts'] = false
 
 default['gitlab-patroni']['patroni']['consul']['check_interval'] = '10s'
 default['gitlab-patroni']['patroni']['consul']['extra_checks']['master'] = []
@@ -73,5 +74,3 @@ default['gitlab-patroni']['patroni']['config']['bootstrap']['pg_hba'] = [
   # 'host replication gitlab-replicator 127.0.0.1/32 md5',
   # 'host replication gitlab-replicator 192.168.0.0/11 md5',
 ]
-
-default['gitlab-patroni']['patroni']['use_custom_scripts'] = false
