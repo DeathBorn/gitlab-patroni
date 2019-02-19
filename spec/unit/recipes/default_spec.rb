@@ -13,6 +13,8 @@ describe 'gitlab-patroni::default' do
     ChefSpec::ServerRunner.new do |node|
       node.normal['etc']['passwd'] = {}
       node.normal['gitlab-patroni']['patroni']['use_custom_scripts'] = true
+      node.normal['gitlab-patroni']['patroni']['config']['postgresql']['wal_e']['command'] = '/var/opt/gitlab/patroni/scripts/wale-restore.sh'
+      node.normal['gitlab-patroni']['patroni']['config']['postgresql']['wal_e']['restore_cmd'] = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch'
     end.converge(described_recipe)
   end
   let(:guard_command) { 'systemctl status patroni && /usr/local/bin/gitlab-patronictl list | grep chefspec | grep running' }
