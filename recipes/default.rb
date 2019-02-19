@@ -15,6 +15,6 @@ GitlabPatroni::AttributesHelper.populate_missing_values(node)
 include_recipe '::postgresql'
 include_recipe '::patroni'
 
-if node['gitlab-patroni']['patroni']['custom_scripts']
+if node['gitlab-patroni']['patroni']['use_custom_scripts']
   include_recipe '::custom_scripts'
 end

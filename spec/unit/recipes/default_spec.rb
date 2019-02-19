@@ -12,7 +12,7 @@ describe 'gitlab-patroni::default' do
   let(:chef_run) do
     ChefSpec::ServerRunner.new do |node|
       node.normal['etc']['passwd'] = {}
-      node.normal['gitlab-patroni']['patroni']['custom_scripts'] = true
+      node.normal['gitlab-patroni']['patroni']['use_custom_scripts'] = true
     end.converge(described_recipe)
   end
   let(:guard_command) { 'systemctl status patroni && /usr/local/bin/gitlab-patronictl list | grep chefspec | grep running' }
