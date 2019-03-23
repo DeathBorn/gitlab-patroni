@@ -17,3 +17,4 @@ depends 'logrotate', '~> 2.2.0'
 depends 'sysctl', '= 0.10.2'
 depends 'gitlab_secrets'
 depends 'consul', '= 3.0.0'
+
