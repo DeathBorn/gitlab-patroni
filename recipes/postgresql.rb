@@ -5,7 +5,9 @@
 # Copyright 2018, GitLab Inc.
 
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
+postgresql_bin_directory    = node['gitlab-patroni']['postgresql']['bin_directory']
 postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
+postgresql_data_directory   = node['gitlab-patroni']['postgresql']['data_directory']
 
 directory postgresql_config_directory do
   recursive true
@@ -51,7 +53,15 @@ end
 
 cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
   source 'postgresql.conf'
+  notifies :run, 'execute[reload-postgresql]'
   only_if { File.exist?(name) }
+end
+
+execute 'reload-postgresql' do
+  command "#{postgresql_bin_directory}/pg_ctl reload --pgdata=\"#{postgresql_data_directory}\" --silent"
+  user 'gitlab-psql'
+  only_if 'pgrep -P 1 -u gitlab-psql postgres | wc -l'
+  action :nothing
 end
 
 file "#{postgresql_config_directory}/cacert.pem" do
