@@ -35,6 +35,8 @@ end
 
 package "postgresql-#{postgresql_helper.version}"
 package "postgresql-#{postgresql_helper.version}-repack"
+# Needed by psycopg2 >= 2.8 which is a dependency of Patroni
+package "postgresql-server-dev-#{postgresql_helper.version}"
 
 service 'postgresql' do
   action %i[stop disable]
