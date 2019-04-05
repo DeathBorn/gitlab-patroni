@@ -39,6 +39,10 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to install_package('apt-transport-https')
     end
 
+    it 'installs postgresql-server-dev' do
+      expect(chef_run).to install_package('postgresql-server-dev-9.6')
+    end
+
     it 'adds PostgreSQL APT repository' do
       expect(chef_run).to add_apt_repository('postgresql').with(
         uri: 'https://download.postgresql.org/pub/repos/apt/',
