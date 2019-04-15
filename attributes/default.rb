@@ -66,11 +66,4 @@ default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['postgresql']
 default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['postgresql']['parameters']['max_replication_slots'] = 5
 default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['postgresql']['parameters']['checkpoint_timeout'] = 30
 default['gitlab-patroni']['patroni']['config']['bootstrap']['initdb'] = [{ 'encoding' => 'UTF8' }, { 'locale' => 'C.UTF-8' }]
-default['gitlab-patroni']['patroni']['config']['bootstrap']['pg_hba'] = [
-  # 'host postgres gitlab-superuser 192.168.0.0/11 md5',
-  # 'host all gitlab-superuser 192.168.0.0/11 md5',
-  # 'host all gitlab-superuser 192.168.0.0/11 md5',
-  # 'host all gitlab-superuser 127.0.0.1/32 md5',
-  # 'host replication gitlab-replicator 127.0.0.1/32 md5',
-  # 'host replication gitlab-replicator 192.168.0.0/11 md5',
-]
+default['gitlab-patroni']['patroni']['config']['bootstrap']['pg_hba'] = []
