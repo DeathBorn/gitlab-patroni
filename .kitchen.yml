@@ -9,22 +9,81 @@ provisioner:
 platforms:
   - name: ubuntu-16.04
 
+.common_attributes: &common_attributes
+  gitlab-patroni:
+    secrets:
+      backend: chef_vault
+      path: secrets
+      key: gitlab-patroni
+    patroni:
+      bind_interface: enp0s8
+      config:
+        bootstrap:
+          pg_hba:
+            - host postgres gitlab-superuser 192.168.0.0/11 md5
+            - host all gitlab-superuser 192.168.0.0/11 md5
+            - host all gitlab-superuser 192.168.0.0/11 md5
+            - host all gitlab-superuser 127.0.0.1/32 md5
+            - host replication gitlab-replicator 127.0.0.1/32 md5
+            - host replication gitlab-replicator 192.168.0.0/11 md5
+    postgresql:
+      parameters:
+        shared_buffers: 512MB
+  consul:
+    config:
+      bootstrap_expect: 3
+      datacenter: local
+      ui: true
+      enable_syslog: true
+      log_level: INFO
+  gitlab_consul:
+    cluster_nodes:
+      - 192.168.33.2
+      - 192.168.33.3
+      - 192.168.33.4
+    cluster:
+      bind_interface: enp0s8
+      tls:
+        ssl_key:
+          secret_source: chef_vault
+          secret_bag: secrets
+          item: gitlab-consul-cluster
+        ssl_cert:
+          secret_source: chef_vault
+          secret_bag: secrets
+          item: gitlab-consul-cluster
+        ssl_chain:
+          secret_source: chef_vault
+          secret_bag: secrets
+          item: gitlab-consul-cluster
+
 suites:
   - name: patroni-1
     driver:
       network:
         - ["private_network", {ip: "192.168.33.2"}]
     run_list:
+      - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+    attributes:
+      <<: *common_attributes
+
   - name: patroni-2
     driver:
       network:
         - ["private_network", {ip: "192.168.33.3"}]
     run_list:
+      - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+    attributes:
+      <<: *common_attributes
+
   - name: patroni-3
     driver:
       network:
         - ["private_network", {ip: "192.168.33.4"}]
     run_list:
+      - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+    attributes:
+      <<: *common_attributes

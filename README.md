@@ -9,6 +9,34 @@ Installs and configures [Patroni](https://github.com/zalando/patroni) for GitLab
 
 Describe how your cookbook should be used.
 
+## Setting up a local cluster
+
+We use [Kitchen](https://kitchen.ci/) to automate the creation of a local cluster.
+Under the hood, Kitchen uses [Vagrant](https://www.vagrantup.com/) to provision
+the virtual machines, so make sure you got it installed before you start.
+
+By default we create a cluster of 3 nodes, if you want more, edit `.kitchen.yml`
+and add more suite definitions under `suites`. Make sure to increment the private IP
+number, to add the new IPs under `gitlab_consul.cluster_nodes`, and to update
+`bootstrap_expect` value to match the new cluster count.
+
+To create the cluster, run the following (add `-c <count>` after `create`/`converge` to
+run the operation in parallel):
+
+```
+$ kitchen create all
+$ kitchen converge all
+$ kitchen exec patroni -c 'sudo systemctl start patroni'
+```
+
+If Chef converges successfully, run `kitchen login patroni-<number>` to login to a cluster member.
+
+If Consul, Patroni or Postgres are not running, look at their respective log files for any hints
+(Consul logs to syslog, so use `sudo journalctl -xe _SYSTEMD_UNIT=consul.service` to fetch its logs).
+
+If you can't find a solution, please open an issue in this project, attach `kitchen converge`, Consul,
+Postgres, and Patroni logs to it, then assign it to a recent contributor of this project.
+
 ## Testing
 
 The Makefile, which holds all the logic, is designed to be the same among all
