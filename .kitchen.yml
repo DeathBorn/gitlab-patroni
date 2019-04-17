@@ -16,7 +16,7 @@ platforms:
       path: secrets
       key: gitlab-patroni
     patroni:
-      bind_interface: enp0s8
+      bind_interface: <%= ENV['VAGRANT_INTERFACE_NAME'] || 'enp0s8' %>
       config:
         bootstrap:
           pg_hba:
@@ -42,7 +42,7 @@ platforms:
       - 192.168.33.3
       - 192.168.33.4
     cluster:
-      bind_interface: enp0s8
+      bind_interface: <%= ENV['VAGRANT_INTERFACE_NAME'] || 'enp0s8' %>
       tls:
         ssl_key:
           secret_source: chef_vault

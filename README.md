@@ -25,6 +25,7 @@ run the operation in parallel):
 
 ```
 $ kitchen create all
+$ export VAGRANT_INTERFACE_NAME=$(kitchen exec patroni-1 --no-color -c "ip -o -4 addr show | grep 192.168.33.2 | cut -f2 -d' '" | tail -1)
 $ kitchen converge all
 $ kitchen exec patroni -c 'sudo systemctl start patroni'
 ```
