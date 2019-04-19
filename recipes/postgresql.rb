@@ -62,7 +62,7 @@ end
 execute 'reload-postgresql' do
   command "#{postgresql_bin_directory}/pg_ctl reload --pgdata=\"#{postgresql_data_directory}\" --silent"
   user postgresql_helper.postgresql_user
-  only_if "#{postgresql_bin_directory}/pg_ctl status --pgdata=\"#{postgresql_data_directory}\"", :user => postgresql_helper.postgresql_user
+  only_if "#{postgresql_bin_directory}/pg_ctl status --pgdata=\"#{postgresql_data_directory}\"", user: postgresql_helper.postgresql_user
   action :nothing
 end
 
