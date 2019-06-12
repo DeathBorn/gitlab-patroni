@@ -5,6 +5,7 @@
 # Copyright 2018, GitLab Inc.
 
 check_interval = node['gitlab-patroni']['patroni']['consul']['check_interval']
+service_name = node['gitlab-patroni']['patroni']['consul']['service_name']
 
 service 'consul' do
   supports [:reload]
@@ -15,8 +16,8 @@ consul_definition 'patroni' do
   parameters(
     [
       {
-        id: 'patroni-master',
-        name: 'patroni',
+        id: "#{service_name}-master",
+        name: service_name,
         tags: [
           'master'
         ],
@@ -28,8 +29,8 @@ consul_definition 'patroni' do
         ].concat(node['gitlab-patroni']['patroni']['consul']['extra_checks']['master'])
       },
       {
-        id: 'patroni-replica',
-        name: 'patroni',
+        id: "#{service_name}-replica",
+        name: service_name,
         tags: [
           'replica'
         ],
