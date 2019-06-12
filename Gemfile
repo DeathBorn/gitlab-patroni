@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 group :test do
   gem 'berkshelf', '~> 7.0'
+  gem 'chef', '~> 14.10'
   gem 'chef-vault', '~> 3.0'
   gem 'chef-vault-testfixtures', '~> 3.0'
   gem 'chefspec', '~> 7.2'
