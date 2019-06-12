@@ -38,6 +38,7 @@ default['gitlab-patroni']['patroni']['bind_interface'] = 'lo'
 default['gitlab-patroni']['patroni']['use_custom_scripts'] = false
 
 default['gitlab-patroni']['patroni']['consul']['check_interval'] = '10s'
+default['gitlab-patroni']['patroni']['consul']['service_name'] = 'patroni'
 default['gitlab-patroni']['patroni']['consul']['extra_checks']['master'] = []
 default['gitlab-patroni']['patroni']['consul']['extra_checks']['replica'] = []
 
