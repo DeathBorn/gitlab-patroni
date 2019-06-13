@@ -91,15 +91,10 @@ service 'rsyslog' do
   supports [:restart]
 end
 
-[
-  log_directory,
-  postgresql_log_directory,
-].each do |dir|
-  directory dir do
-    recursive true
-    owner 'syslog'
-    group 'syslog'
-  end
+directory log_directory do
+  recursive true
+  owner 'syslog'
+  group 'syslog'
 end
 
 template '/etc/rsyslog.d/50-patroni.conf' do
@@ -111,13 +106,32 @@ template '/etc/rsyslog.d/50-patroni.conf' do
   notifies :restart, 'service[rsyslog]', :delayed
 end
 
-template '/etc/rsyslog.d/51-postgresql.conf' do
-  source 'rsyslog.conf.erb'
-  variables(
-    program_name: 'postgres',
-    log_path: postgresql_log_path
-  )
-  notifies :restart, 'service[rsyslog]', :delayed
+if node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
+  template '/etc/rsyslog.d/51-postgresql.conf' do
+    source 'rsyslog.conf.erb'
+    variables(
+      program_name: 'postgres',
+      log_path: postgresql_log_path
+    )
+    notifies :restart, 'service[rsyslog]', :delayed
+  end
+
+  directory postgresql_log_directory do
+    recursive true
+    owner 'syslog'
+    group 'syslog'
+  end
+else
+  file '/etc/rsyslog.d/51-postgresql.conf' do
+    action :delete
+    notifies :restart, 'service[rsyslog]', :delayed
+  end
+
+  directory postgresql_log_directory do
+    recursive true
+    owner postgresql_helper.postgresql_user
+    group postgresql_helper.postgresql_group
+  end
 end
 
 template '/etc/rsyslog.d/52-wale.conf' do

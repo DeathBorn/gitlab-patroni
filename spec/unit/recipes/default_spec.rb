@@ -235,10 +235,6 @@ YML
       expect(chef_run).to create_directory('/var/log/gitlab/patroni').with(owner: 'syslog', group: 'syslog')
     end
 
-    it 'creates PostgreSQL log directory' do
-      expect(chef_run).to create_directory('/var/log/gitlab/postgresql').with(owner: 'syslog', group: 'syslog')
-    end
-
     it 'creates Patroni rsyslog config' do
       config_path = '/etc/rsyslog.d/50-patroni.conf'
 
@@ -246,11 +242,44 @@ YML
       expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
     end
 
-    it 'creates PostgreSQL rsyslog config' do
-      config_path = '/etc/rsyslog.d/51-postgresql.conf'
+    context 'when log_destination is syslog' do
+      let(:chef_run) do
+        ChefSpec::ServerRunner.new do |node|
+          node.normal['etc']['passwd'] = {}
+          node.normal['gitlab-patroni']['postgresql']['parameters']['log_destination'] = 'syslog'
+        end.converge(described_recipe)
+      end
 
-      expect(chef_run).to render_file(config_path).with_content("if $programname == 'postgres' then /var/log/gitlab/postgresql/postgresql.log;svlogd_format")
-      expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+      it 'creates PostgreSQL rsyslog config' do
+        config_path = '/etc/rsyslog.d/51-postgresql.conf'
+
+        expect(chef_run).to render_file(config_path).with_content("if $programname == 'postgres' then /var/log/gitlab/postgresql/postgresql.log;svlogd_format")
+        expect(chef_run.template(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+      end
+
+      it 'creates PostgreSQL log directory' do
+        expect(chef_run).to create_directory('/var/log/gitlab/postgresql').with(owner: 'syslog', group: 'syslog')
+      end
+    end
+
+    context 'when log_destination is not syslog' do
+      let(:chef_run) do
+        ChefSpec::ServerRunner.new do |node|
+          node.normal['etc']['passwd'] = {}
+          node.normal['gitlab-patroni']['postgresql']['parameters']['log_destination'] = 'stderr'
+        end.converge(described_recipe)
+      end
+
+      it 'creates PostgreSQL log directory' do
+        expect(chef_run).to create_directory('/var/log/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
+      end
+
+      it 'doesnt create PostgreSQL rsyslog config' do
+        config_path = '/etc/rsyslog.d/51-postgresql.conf'
+
+        expect(chef_run).not_to render_file(config_path)
+        expect(chef_run.file(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+      end
     end
 
     it 'creates WAL-E rsyslog config' do
