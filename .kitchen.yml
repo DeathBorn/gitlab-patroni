@@ -65,6 +65,7 @@ suites:
     run_list:
       - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+      - recipe[gitlab-patroni::consul]
     attributes:
       <<: *common_attributes
 
@@ -75,6 +76,7 @@ suites:
     run_list:
       - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+      - recipe[gitlab-patroni::consul]
     attributes:
       <<: *common_attributes
 
@@ -85,5 +87,6 @@ suites:
     run_list:
       - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+      - recipe[gitlab-patroni::consul]
     attributes:
       <<: *common_attributes
