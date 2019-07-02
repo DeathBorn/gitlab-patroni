@@ -132,6 +132,11 @@ else
     owner postgresql_helper.postgresql_user
     group postgresql_helper.postgresql_group
   end
+
+  file "#{postgresql_log_directory}/#{node['gitlab-patroni']['postgresql']['parameters']['log_filename'] || 'postgresql.log'}" do
+    owner postgresql_helper.postgresql_user
+    group postgresql_helper.postgresql_group
+  end
 end
 
 template '/etc/rsyslog.d/52-wale.conf' do
