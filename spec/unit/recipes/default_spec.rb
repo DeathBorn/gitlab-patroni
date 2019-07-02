@@ -274,6 +274,10 @@ YML
         expect(chef_run).to create_directory('/var/log/gitlab/postgresql').with(owner: 'postgres', group: 'postgres')
       end
 
+      it 'creates PostgreSQL log file' do
+        expect(chef_run).to create_file('/var/log/gitlab/postgresql/postgresql.log').with(owner: 'postgres', group: 'postgres')
+      end
+
       it 'doesnt create PostgreSQL rsyslog config' do
         config_path = '/etc/rsyslog.d/51-postgresql.conf'
 
