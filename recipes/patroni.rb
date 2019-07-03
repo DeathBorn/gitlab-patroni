@@ -175,18 +175,12 @@ include_recipe 'logrotate::default'
   end
 end
 
-if node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
-  logrotate_app :postgresql do
-    path postgresql_log_path
-    options %w(missingok compress delaycompress notifempty)
-    rotate 7
-    frequency 'daily'
-  end
-else
-  logrotate_app :postgresql do
-    path postgresql_log_path
-    options %w(missingok compress delaycompress notifempty copytruncate)
-    rotate 7
-    frequency 'daily'
-  end
+logrotate_options = %w(missingok compress delaycompress notifempty)
+logrotate_options << 'copytruncate' if node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
+
+logrotate_app :postgresql do
+  path postgresql_log_path
+  options logrotate_options
+  rotate 7
+  frequency 'daily'
 end
