@@ -165,7 +165,6 @@ include_recipe 'logrotate::default'
 
 {
   patroni: log_path,
-  postgresql: postgresql_log_path,
   wale: wale_log_path
 }.each do |app, app_path|
   logrotate_app app do
@@ -174,4 +173,11 @@ include_recipe 'logrotate::default'
     rotate 7
     frequency 'daily'
   end
+end
+
+logrotate_app :postgresql do
+  path postgresql_log_path
+  options %w(missingok compress delaycompress notifempty copytruncate)
+  rotate 7
+  frequency 'daily'
 end

@@ -343,7 +343,7 @@ cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/p
     it 'rotates PostgreSQL logs' do
       expect(chef_run).to enable_logrotate_app('postgresql').with(
         path: '/var/log/gitlab/postgresql/postgresql.log',
-        options: %w(missingok compress delaycompress notifempty),
+        options: %w(missingok compress delaycompress notifempty copytruncate),
         rotate: 7,
         frequency: 'daily'
       )
