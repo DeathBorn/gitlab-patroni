@@ -260,6 +260,15 @@ YML
       it 'creates PostgreSQL log directory' do
         expect(chef_run).to create_directory('/var/log/gitlab/postgresql').with(owner: 'syslog', group: 'syslog')
       end
+
+      it 'rotates PostgreSQL logs' do
+        expect(chef_run).to enable_logrotate_app('postgresql').with(
+          path: '/var/log/gitlab/postgresql/postgresql.log',
+          options: %w(missingok compress delaycompress notifempty),
+          rotate: 7,
+          frequency: 'daily'
+        )
+      end
     end
 
     context 'when log_destination is not syslog' do
@@ -283,6 +292,15 @@ YML
 
         expect(chef_run).not_to render_file(config_path)
         expect(chef_run.file(config_path)).to notify('service[rsyslog]').to(:restart).delayed
+      end
+
+      it 'rotates PostgreSQL logs' do
+        expect(chef_run).to enable_logrotate_app('postgresql').with(
+          path: '/var/log/gitlab/postgresql/postgresql.log',
+          options: %w(missingok compress delaycompress notifempty copytruncate),
+          rotate: 7,
+          frequency: 'daily'
+        )
       end
     end
 
@@ -334,15 +352,6 @@ cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/p
     it 'rotates Patroni logs' do
       expect(chef_run).to enable_logrotate_app('patroni').with(
         path: '/var/log/gitlab/patroni/patroni.log',
-        options: %w(missingok compress delaycompress notifempty),
-        rotate: 7,
-        frequency: 'daily'
-      )
-    end
-
-    it 'rotates PostgreSQL logs' do
-      expect(chef_run).to enable_logrotate_app('postgresql').with(
-        path: '/var/log/gitlab/postgresql/postgresql.log',
         options: %w(missingok compress delaycompress notifempty),
         rotate: 7,
         frequency: 'daily'
