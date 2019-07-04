@@ -15,6 +15,7 @@ postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superu
 patroni_config_path         = "#{config_directory}/patroni.yml"
 gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
 wale_log_path               = "#{postgresql_log_directory}/wale.log"
+postgresql_syslog_logging   = node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
 
 apt_update 'apt update'
 
@@ -106,7 +107,7 @@ template '/etc/rsyslog.d/50-patroni.conf' do
   notifies :restart, 'service[rsyslog]', :delayed
 end
 
-if node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
+if postgresql_syslog_logging
   template '/etc/rsyslog.d/51-postgresql.conf' do
     source 'rsyslog.conf.erb'
     variables(
@@ -165,7 +166,6 @@ include_recipe 'logrotate::default'
 
 {
   patroni: log_path,
-  postgresql: postgresql_log_path,
   wale: wale_log_path
 }.each do |app, app_path|
   logrotate_app app do
@@ -174,4 +174,14 @@ include_recipe 'logrotate::default'
     rotate 7
     frequency 'daily'
   end
+end
+
+logrotate_options = %w(missingok compress delaycompress notifempty)
+logrotate_options << 'copytruncate' unless postgresql_syslog_logging
+
+logrotate_app :postgresql do
+  path postgresql_log_path
+  options logrotate_options
+  rotate 7
+  frequency 'daily'
 end
