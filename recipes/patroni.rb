@@ -16,6 +16,10 @@ patroni_config_path         = "#{config_directory}/patroni.yml"
 gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
 wale_log_path               = "#{postgresql_log_directory}/wale.log"
 postgresql_syslog_logging   = node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
+is_patroni_running_command  = "systemctl status patroni && #{gitlab_patronictl_path} list | grep #{node.name} | grep running"
+alter_user_query            = "ALTER USER \"#{postgresql_superuser}\" SET statement_timeout=0"
+
+postgresql_superuser_password = node['gitlab-patroni']['patroni']['users']['superuser']['password']
 
 apt_update 'apt update'
 
@@ -79,7 +83,15 @@ execute 'update bootstrap config' do
 YML
   CMD
   # patronictl edit-config fails (for some reason) if the state is not in a running state
-  only_if "systemctl status patroni && #{gitlab_patronictl_path} list | grep #{node.name} | grep running"
+  only_if is_patroni_running_command
+end
+
+execute 'disable statement_timeout for superuser' do
+  command "#{install_directory}/bin/patronictl -c #{patroni_config_path} query --role master --command '#{alter_user_query}' --username #{postgresql_superuser} --dbname postgres"
+  environment(
+    'PGPASSWORD' => postgresql_superuser_password
+  )
+  only_if is_patroni_running_command
 end
 
 poise_service 'patroni' do
@@ -155,7 +167,7 @@ template "#{node['gitlab-patroni']['postgresql']['config_directory']}/.pgpass" d
     port: postgresql_helper.postgresql_port,
     database: '*',
     username: postgresql_superuser,
-    password: node['gitlab-patroni']['patroni']['users']['superuser']['password']
+    password: postgresql_superuser_password
   )
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group

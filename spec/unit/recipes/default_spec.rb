@@ -231,6 +231,26 @@ YML
       end
     end
 
+    describe 'disabling statement_timeout for superuser' do
+      context 'patroni service is not running or is not in a running state' do
+        before do
+          stub_command(guard_command).and_return(false)
+        end
+
+        it 'does not run the query' do
+          expect(chef_run).not_to run_execute('disable statement_timeout for superuser')
+        end
+      end
+
+      context 'patroni service is running' do
+        it 'run the query' do
+          command = '/opt/patroni/bin/patronictl -c /var/opt/gitlab/patroni/patroni.yml query --role master --command \'ALTER USER "gitlab-superuser" SET statement_timeout=0\' --username gitlab-superuser --dbname postgres'
+
+          expect(chef_run).to run_execute('disable statement_timeout for superuser').with(command: command, environment: { 'PGPASSWORD' => 'superuser-password' })
+        end
+      end
+    end
+
     it 'creates Patroni log directory' do
       expect(chef_run).to create_directory('/var/log/gitlab/patroni').with(owner: 'syslog', group: 'syslog')
     end
