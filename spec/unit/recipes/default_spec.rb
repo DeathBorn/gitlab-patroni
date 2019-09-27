@@ -153,8 +153,12 @@ describe 'gitlab-patroni::default' do
         expect(chef_run).to create_directory('/var/opt/gitlab/patroni/scripts').with(owner: 'postgres', group: 'postgres')
       end
 
-      it 'creates wale-restore scripts' do
+      it 'creates wale-restore script' do
         expect(chef_run).to create_cookbook_file('/var/opt/gitlab/patroni/scripts/wale-restore.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
+      end
+
+      it 'creates analyze-db script' do
+        expect(chef_run).to create_template('/var/opt/gitlab/patroni/scripts/analyze-db.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
       end
     end
   end
