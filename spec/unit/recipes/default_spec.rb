@@ -192,7 +192,7 @@ describe 'gitlab-patroni::default' do
       config_path    = '/var/opt/gitlab/patroni/patroni.yml'
       patroni_config = File.read('spec/fixtures/patroni.yml')
 
-      expect(chef_run).to create_file(config_path).with(owner: 'postgres', group: 'postgres', content: patroni_config)
+      expect(chef_run).to create_file(config_path).with(owner: 'postgres', group: 'postgres', content: patroni_config, mode: '0600')
       expect(chef_run.file(config_path)).to notify('poise_service[patroni]').to(:reload).delayed
     end
 
