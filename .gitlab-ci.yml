@@ -2,13 +2,12 @@ image: ruby:2.5
 
 variables:
   DEBIAN_FRONTEND: noninteractive
+  KITCHEN_YAML: ".kitchen.ci.yml"
   BUNDLE_PATH: "$CI_PROJECT_DIR/.bundle"
-  DIGITALOCEAN_TESTBOX_FQDN: template.${CI_PROJECT_NAMESPACE}.ci.gitlab.test
+  DIGITALOCEAN_TESTBOX_FQDN: gitlab-patroni.${CI_PROJECT_NAMESPACE}.ci.gitlab.test
 
 stages:
-  - lint
-  - unit
-  - integration
+  - test
   - publish
 
 before_script:
@@ -19,30 +18,39 @@ before_script:
   - apt-get -qq update && apt-get -yqq install openssh-client rsync make jq
   - make gems
 
+# Prefer GitLab CI parallelism to Make parallelism (split the lint step)
 cookstyle:
-  stage: lint
+  stage: test
   cache:
     paths:
       - $BUNDLE_PATH
   script:
-    - bundle exec cookstyle
+    - make cookstyle
 
 foodcritic:
-  stage: lint
+  stage: test
   cache:
     paths:
       - $BUNDLE_PATH
   script:
-    - bundle exec foodcritic .
+    - make foodcritic
 
 rspec-test-job:
-  stage: unit
+  stage: test
   coverage: "/^\\s*Touch\\sCoverage:\\s*(\\d+\\.\\d+)%/"
   cache:
     paths:
       - "$BUNDLE_PATH"
   script:
     - make rspec
+
+kitchen-test-job:
+  stage: test
+  cache:
+    paths:
+      - "$BUNDLE_PATH"
+  script:
+    - make kitchen
 
 push-cookbook:
   stage: publish

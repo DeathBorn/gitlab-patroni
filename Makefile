@@ -1,4 +1,4 @@
-# Makefile for gitlab-patroni cookbook (please set the cookbook name)
+# Makefile for gitlab-patroni cookbook
 # Copyright 2018, GitLab B.V.
 # Licence MIT
 # vim: ts=8 sw=8 noet
@@ -53,17 +53,23 @@ gems:	### Install latest versions of all gems
 	rm -f Gemfile.lock
 	bundle install --jobs $$(nproc) --clean --path $(BUNDLE_PATH)
 
-.PHONY: check
-check:	### Check style of all ruby files
-	find $(ROOT_DIR) -type f -name \*.rb -not -path "$(BUNDLE_PATH)/*" -exec bundle exec rubocop -S Gemfile Berksfile {} +
+.PHONY: lint
+lint:	cookstyle foodcritic
+
+.PHONY: cookstyle
+cookstyle:
+	bundle exec cookstyle
+
+.PHONY: foodcritic
+foodcritic:
+	bundle exec foodcritic .
 
 .PHONY: rspec
-rspec:	### Run rspec tests
-rspec:	check
+rspec:
 	bundle exec rspec -f d
 
 .PHONY: kitchen
-kitchen:	### Run kitchen tests on DigitalOcean
+kitchen:
 ifeq ($(GITLAB_CI),)
 	@# Locally, just fire up kitchen test, as we're not using ephemeral keys
 	bundle exec kitchen test --concurrency=$(KITCHEN_TESTS) --destroy=always
