@@ -23,6 +23,8 @@ postgresql_superuser_password = node['gitlab-patroni']['patroni']['users']['supe
 
 apt_update 'apt update'
 
+package 'build-essential'
+
 python_runtime node['gitlab-patroni']['patroni']['python_runtime_version'] do
   pip_version node['gitlab-patroni']['patroni']['pip_version']
 end

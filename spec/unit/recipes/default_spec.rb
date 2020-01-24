@@ -168,6 +168,10 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to periodic_apt_update('apt update')
     end
 
+    it 'installs build_essential' do
+      expect(chef_run).to install_package('build-essential')
+    end
+
     it 'installs Python runtime' do
       expect(chef_run).to install_python_runtime('3').with(pip_version: '18.0')
     end
