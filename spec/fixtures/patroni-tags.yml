@@ -36,7 +36,9 @@ bootstrap:
       password: replication-password
       options:
       - replication
-tags: {}
+tags:
+  nofailover: true
+  noloadbalance: true
 postgresql:
   data_dir: "/var/opt/gitlab/postgresql/data"
   config_dir: "/var/opt/gitlab/postgresql"

@@ -200,6 +200,26 @@ describe 'gitlab-patroni::default' do
       expect(chef_run.file(config_path)).to notify('poise_service[patroni]').to(:reload).delayed
     end
 
+    context 'when tags are overridden' do
+      let(:chef_run) do
+        ChefSpec::ServerRunner.new do |node|
+          node.normal['etc']['passwd'] = {}
+          node.normal['gitlab-patroni']['patroni']['config']['postgresql']['wal_e']['command'] = '/var/opt/gitlab/patroni/scripts/wale-restore.sh'
+          node.normal['gitlab-patroni']['patroni']['config']['postgresql']['wal_e']['restore_cmd'] = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch'
+          node.normal['gitlab-patroni']['patroni']['config']['tags']['nofailover'] = true
+          node.normal['gitlab-patroni']['patroni']['config']['tags']['noloadbalance'] = true
+        end.converge(described_recipe)
+      end
+
+      it 'creates patroni.yml' do
+        config_path    = '/var/opt/gitlab/patroni/patroni.yml'
+        patroni_config = File.read('spec/fixtures/patroni-tags.yml')
+
+        expect(chef_run).to create_file(config_path).with(owner: 'postgres', group: 'postgres', content: patroni_config)
+        expect(chef_run.file(config_path)).to notify('poise_service[patroni]').to(:reload).delayed
+      end
+    end
+
     describe 'updating bootstrap config' do
       context 'patroni service is not running or is not in a running state' do
         before do

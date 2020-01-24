@@ -69,3 +69,4 @@ default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['postgresql']
 default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['postgresql']['parameters']['checkpoint_timeout'] = 30
 default['gitlab-patroni']['patroni']['config']['bootstrap']['initdb'] = [{ 'encoding' => 'UTF8' }, { 'locale' => 'C.UTF-8' }]
 default['gitlab-patroni']['patroni']['config']['bootstrap']['pg_hba'] = []
+default['gitlab-patroni']['patroni']['config']['tags'] = {}
