@@ -54,6 +54,7 @@ default['gitlab-patroni']['patroni']['config']['scope'] = 'pg-ha-cluster'
 default['gitlab-patroni']['patroni']['config']['name'] = node.name
 default['gitlab-patroni']['patroni']['config']['restapi']['listen'] = '0.0.0.0:8009'
 default['gitlab-patroni']['patroni']['config']['consul']['host'] = '127.0.0.1:8500'
+default['gitlab-patroni']['patroni']['config']['consul']['checks'] = []
 
 default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['ttl'] = 30
 default['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['loop_wait'] = 10
