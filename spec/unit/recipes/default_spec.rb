@@ -311,7 +311,7 @@ YML
 
       it 'rotates PostgreSQL logs' do
         expect(chef_run).to enable_logrotate_app('postgresql').with(
-          path: '/var/log/gitlab/postgresql/postgresql.log',
+          path: ['/var/log/gitlab/postgresql/postgresql.log', '/var/log/gitlab/postgresql/postgresql.csv'],
           options: %w(missingok compress delaycompress notifempty),
           rotate: 7,
           frequency: 'daily'
@@ -344,7 +344,7 @@ YML
 
       it 'rotates PostgreSQL logs' do
         expect(chef_run).to enable_logrotate_app('postgresql').with(
-          path: '/var/log/gitlab/postgresql/postgresql.log',
+          path: ['/var/log/gitlab/postgresql/postgresql.log', '/var/log/gitlab/postgresql/postgresql.csv'],
           options: %w(missingok compress delaycompress notifempty copytruncate),
           rotate: 7,
           frequency: 'daily'
