@@ -1,8 +1,8 @@
-# Cookbook Name:: gitlab-patroni
+# Cookbook:: gitlab-patroni
 # Recipe:: consul
 # License:: MIT
 #
-# Copyright 2018, GitLab Inc.
+# Copyright:: 2018, GitLab Inc.
 
 check_interval = node['gitlab-patroni']['patroni']['consul']['check_interval']
 service_name = node['gitlab-patroni']['patroni']['consul']['service_name']
