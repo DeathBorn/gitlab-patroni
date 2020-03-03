@@ -1,8 +1,8 @@
-# Cookbook Name:: gitlab-patroni
+# Cookbook:: gitlab-patroni
 # Recipe:: default
 # License:: MIT
 #
-# Copyright 2018, GitLab Inc.
+# Copyright:: 2018, GitLab Inc.
 
 # We can't have secrets merging inside `AttributesHelper` because `get_secrets` is not
 # designed to work inside a module

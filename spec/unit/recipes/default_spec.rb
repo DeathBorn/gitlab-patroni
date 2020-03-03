@@ -137,15 +137,15 @@ describe 'gitlab-patroni::default' do
     end
 
     it 'sets shmmax kernel parameter' do
-      expect(chef_run).to apply_sysctl_param('kernel.shmmax').with(value: '123480309760')
+      expect(chef_run).to apply_sysctl('kernel.shmmax').with(value: '123480309760')
     end
 
     it 'sets shmall kernel parameter' do
-      expect(chef_run).to apply_sysctl_param('kernel.shmall').with(value: '30146560')
+      expect(chef_run).to apply_sysctl('kernel.shmall').with(value: '30146560')
     end
 
     it 'sets sem kernel parameter' do
-      expect(chef_run).to apply_sysctl_param('kernel.sem').with(value: '250 100000 32 1024')
+      expect(chef_run).to apply_sysctl('kernel.sem').with(value: '250 100000 32 1024')
     end
 
     context 'creates scripts' do

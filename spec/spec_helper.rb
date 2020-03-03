@@ -15,5 +15,3 @@ RSpec.configure do |config|
   # Specify the operating version to mock Ohai data from
   config.version = '16.04'
 end
-
-at_exit { ChefSpec::Coverage.report! }

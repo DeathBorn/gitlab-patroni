@@ -1,8 +1,8 @@
-# Cookbook Name:: gitlab-patroni
+# Cookbook:: gitlab-patroni
 # Recipe:: postgresql
 # License:: MIT
 #
-# Copyright 2018, GitLab Inc.
+# Copyright:: 2018, GitLab Inc.
 
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
 postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
@@ -53,7 +53,7 @@ end
 
 cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
   source 'postgresql.conf'
-  only_if { File.exist?(name) }
+  only_if { ::File.exist?(name) }
 end
 
 file "#{postgresql_config_directory}/cacert.pem" do
@@ -80,11 +80,11 @@ file "#{postgresql_config_directory}/server.key" do
   sensitive true
 end
 
-sysctl_param 'kernel.shmmax' do
+sysctl 'kernel.shmmax' do
   value node['gitlab-patroni']['postgresql']['shmmax']
 end
 
-sysctl_param 'kernel.shmall' do
+sysctl 'kernel.shmall' do
   value node['gitlab-patroni']['postgresql']['shmall']
 end
 
@@ -94,6 +94,6 @@ sem = [
   node['gitlab-patroni']['postgresql']['semopm'],
   node['gitlab-patroni']['postgresql']['semmni'],
 ].join(' ')
-sysctl_param 'kernel.sem' do
+sysctl 'kernel.sem' do
   value sem
 end

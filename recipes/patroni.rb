@@ -1,8 +1,8 @@
-# Cookbook Name:: gitlab-patroni
+# Cookbook:: gitlab-patroni
 # Recipe:: patroni
 # License:: MIT
 #
-# Copyright 2018, GitLab Inc.
+# Copyright:: 2018, GitLab Inc.
 
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
 config_directory            = node['gitlab-patroni']['patroni']['config_directory']
