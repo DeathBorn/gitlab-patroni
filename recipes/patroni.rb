@@ -11,6 +11,7 @@ log_directory               = node['gitlab-patroni']['patroni']['log_directory']
 log_path                    = "#{log_directory}/patroni.log"
 postgresql_log_directory    = node['gitlab-patroni']['postgresql']['log_directory']
 postgresql_log_path         = "#{postgresql_log_directory}/postgresql.log"
+postgresql_csvlog_path      = "#{postgresql_log_directory}/postgresql.csv"
 postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superuser']['username']
 patroni_config_path         = "#{config_directory}/patroni.yml"
 gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
@@ -194,7 +195,7 @@ logrotate_options = %w(missingok compress delaycompress notifempty)
 logrotate_options << 'copytruncate' unless postgresql_syslog_logging
 
 logrotate_app :postgresql do
-  path postgresql_log_path
+  path [postgresql_log_path, postgresql_csvlog_path]
   options logrotate_options
   rotate 7
   frequency 'daily'
