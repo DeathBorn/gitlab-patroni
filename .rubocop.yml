@@ -3,7 +3,7 @@ inherit_from: .rubocop_todo.yml
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 
 Style/Documentation:
@@ -24,7 +24,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Enabled: false
 
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Enabled: false
 
 Style/TrailingCommaInHashLiteral:
