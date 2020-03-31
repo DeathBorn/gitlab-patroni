@@ -76,6 +76,7 @@ file patroni_config_path do
   content YAML.dump(node['gitlab-patroni']['patroni']['config'].to_hash)
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
+  mode '0600'
   notifies :reload, 'poise_service[patroni]', :delayed
 end
 
