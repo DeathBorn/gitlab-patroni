@@ -5,8 +5,8 @@ After=syslog.target network.target
 [Service]
 Type=simple
 
-User=<%= patroni_conf['gitlab-patroni']['user'] %>
-Group=<%= patroni_conf['gitlab-patroni']['group'] %>
+User=<%= node['gitlab-patroni']['user'] %>
+Group=<%= node['gitlab-patroni']['group'] %>
 
 StandardOutput=syslog
 StandardError=syslog
@@ -15,7 +15,7 @@ SyslogIdentifier=patroni
 WorkingDirectory=~
 
 # Start the patroni process
-ExecStart=<%= patroni_conf['gitlab-patroni']['patroni']['install_directory'] %>/bin/patroni <%= patroni_conf['gitlab-patroni']['patroni']['config_directory'] %>/patroni.yml
+ExecStart=<%= node['gitlab-patroni']['patroni']['install_directory'] %>/bin/patroni <%= node['gitlab-patroni']['patroni']['config_directory'] %>/patroni.yml
 
 # Send HUP to reload from patroni.yml
 ExecReload=/bin/kill -s HUP $MAINPID
