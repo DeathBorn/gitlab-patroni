@@ -23,7 +23,7 @@ describe 'gitlab-patroni::default' do
     mock_secrets_path = 'spec/fixtures/secrets.json'
     secrets           = JSON.parse(File.read(mock_secrets_path))
 
-    expect_any_instance_of(Chef::Recipe).to receive(:get_secrets)
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secrets)
       .with('dummy', { 'path' => 'gitlab-gstg-secrets/gitlab-patroni', 'item' => 'gstg.enc' }, 'ring' => 'gitlab-secrets', 'key' => 'gstg', 'location' => 'global')
       .and_return(secrets)
 

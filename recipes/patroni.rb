@@ -4,26 +4,35 @@
 #
 # Copyright:: 2018, GitLab Inc.
 
-postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
-config_directory            = node['gitlab-patroni']['patroni']['config_directory']
-install_directory           = node['gitlab-patroni']['patroni']['install_directory']
-log_directory               = node['gitlab-patroni']['patroni']['log_directory']
+# We can't have secrets merging inside `AttributesHelper` because `get_secrets` is not
+# designed to work inside a module
+secrets_hash = node['gitlab-patroni']['secrets']
+secrets      = get_secrets(secrets_hash['backend'], secrets_hash['path'], secrets_hash['key'])
+patroni_conf = node.to_hash
+patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni'])
+patroni_conf = GitlabPatroni::AttributesHelper.populate_missing_values(patroni_conf)
+
+postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(patroni_conf)
+config_directory            = patroni_conf['gitlab-patroni']['patroni']['config_directory']
+install_directory           = patroni_conf['gitlab-patroni']['patroni']['install_directory']
+log_directory               = patroni_conf['gitlab-patroni']['patroni']['log_directory']
 log_path                    = "#{log_directory}/patroni.log"
-postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
-postgresql_user_home        = node['gitlab-patroni']['postgresql']['pg_user_homedir'].nil? ? postgresql_config_directory : node['gitlab-patroni']['postgresql']['pg_user_homedir']
-postgresql_log_directory    = node['gitlab-patroni']['postgresql']['log_directory']
+postgresql_config_directory = patroni_conf['gitlab-patroni']['postgresql']['config_directory']
+postgresql_user_home        = patroni_conf['gitlab-patroni']['postgresql']['pg_user_homedir'].nil? ? postgresql_config_directory : node['gitlab-patroni']['postgresql']['pg_user_homedir']
+postgresql_log_directory    = patroni_conf['gitlab-patroni']['postgresql']['log_directory']
+postgresql_log_directory    = patroni_conf['gitlab-patroni']['postgresql']['log_directory']
 postgresql_log_path         = "#{postgresql_log_directory}/postgresql.log"
 postgresql_csvlog_path      = "#{postgresql_log_directory}/postgresql.csv"
-postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superuser']['username']
+postgresql_superuser        = patroni_conf['gitlab-patroni']['patroni']['users']['superuser']['username']
 patroni_config_path         = "#{config_directory}/patroni.yml"
 gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
 gitlab_pg_activity_path     = '/usr/local/bin/gitlab-pg_activity'
 wale_log_path               = "#{postgresql_log_directory}/wale.log"
-postgresql_syslog_logging   = node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
+postgresql_syslog_logging   = patroni_conf['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
 is_patroni_running_command  = "systemctl status patroni && #{gitlab_patronictl_path} list | grep #{node.name} | grep running"
 alter_user_query            = "ALTER USER \"#{postgresql_superuser}\" SET statement_timeout=0"
 
-postgresql_superuser_password = node['gitlab-patroni']['patroni']['users']['superuser']['password']
+postgresql_superuser_password = patroni_conf['gitlab-patroni']['patroni']['users']['superuser']['password']
 
 package 'build-essential'
 
@@ -47,7 +56,7 @@ python_package 'pg_activity' do
 end
 
 python_package 'patroni[consul]' do
-  version node['gitlab-patroni']['patroni']['version']
+  version patroni_conf['gitlab-patroni']['patroni']['version']
 end
 
 package 'runit'
@@ -58,7 +67,7 @@ directory config_directory do
   group postgresql_helper.postgresql_group
 end
 
-if node['gitlab-patroni']['patroni']['use_custom_scripts']
+if patroni_conf['gitlab-patroni']['patroni']['use_custom_scripts']
   include_recipe '::custom_scripts'
 end
 
@@ -90,7 +99,7 @@ cookbook_file "#{gitlab_pg_activity_path}" do
 end
 
 file patroni_config_path do
-  content YAML.dump(node['gitlab-patroni']['patroni']['config'].to_hash)
+  content YAML.dump(patroni_conf['gitlab-patroni']['patroni']['config'].to_hash)
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
   mode '0600'
@@ -100,7 +109,7 @@ end
 execute 'update bootstrap config' do
   command <<-CMD
 #{install_directory}/bin/patronictl -c #{patroni_config_path} edit-config --force --replace - <<-YML
-#{YAML.dump(node['gitlab-patroni']['patroni']['config']['bootstrap']['dcs'].to_hash)}
+#{YAML.dump(patroni_conf['gitlab-patroni']['patroni']['config']['bootstrap']['dcs'].to_hash)}
 YML
   CMD
   # patronictl edit-config fails (for some reason) if the state is not in a running state
@@ -167,7 +176,7 @@ else
     group postgresql_helper.postgresql_group
   end
 
-  file "#{postgresql_log_directory}/#{node['gitlab-patroni']['postgresql']['parameters']['log_filename'] || 'postgresql.log'}" do
+  file "#{postgresql_log_directory}/#{patroni_conf['gitlab-patroni']['postgresql']['parameters']['log_filename'] || 'postgresql.log'}" do
     owner postgresql_helper.postgresql_user
     group postgresql_helper.postgresql_group
   end
