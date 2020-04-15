@@ -2,11 +2,11 @@ module GitlabPatroni
   module AttributesHelper
     extend self
 
-    def populate_missing_values(node)
-      assign_postgresql_directories(node)
-      assign_postgresql_parameters(node)
-      assign_postgresql_users(node)
-      assign_connect_addresses(node)
+    def populate_missing_values(patroni_conf)
+      patroni_conf = assign_postgresql_directories(patroni_conf)
+      patroni_conf = assign_postgresql_parameters(patroni_conf)
+      patroni_conf = assign_postgresql_users(patroni_conf)
+      patroni_conf = assign_connect_addresses(patroni_conf)
     end
 
     private
@@ -16,19 +16,27 @@ module GitlabPatroni
       postgres_listen_port = node['gitlab-patroni']['patroni']['config']['postgresql']['listen'].split(':').last
       patroni_listen_port  = node['gitlab-patroni']['patroni']['config']['restapi']['listen'].split(':').last
 
-      node.default['gitlab-patroni']['patroni']['config']['restapi']['connect_address']    = "#{address_detector.ipaddress}:#{patroni_listen_port}"
-      node.default['gitlab-patroni']['patroni']['config']['postgresql']['connect_address'] = "#{address_detector.ipaddress}:#{postgres_listen_port}"
+      node['gitlab-patroni']['patroni']['config']['restapi'] ||= {}
+      node['gitlab-patroni']['patroni']['config']['restapi']['connect_address']    = "#{address_detector.ipaddress}:#{patroni_listen_port}"
+
+      node['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
+      node['gitlab-patroni']['patroni']['config']['postgresql']['connect_address'] = "#{address_detector.ipaddress}:#{postgres_listen_port}"
+      node
     end
 
     def assign_postgresql_directories(node)
-      node.default['gitlab-patroni']['patroni']['config']['postgresql']['data_dir']   = node['gitlab-patroni']['postgresql']['data_directory']
-      node.default['gitlab-patroni']['patroni']['config']['postgresql']['config_dir'] = node['gitlab-patroni']['postgresql']['config_directory']
-      node.default['gitlab-patroni']['patroni']['config']['postgresql']['bin_dir'] = node['gitlab-patroni']['postgresql']['bin_directory']
+      node['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
+      node['gitlab-patroni']['patroni']['config']['postgresql']['data_dir']   = node['gitlab-patroni']['postgresql']['data_directory']
+      node['gitlab-patroni']['patroni']['config']['postgresql']['config_dir'] = node['gitlab-patroni']['postgresql']['config_directory']
+      node['gitlab-patroni']['patroni']['config']['postgresql']['bin_dir'] = node['gitlab-patroni']['postgresql']['bin_directory']
+      node
     end
 
     def assign_postgresql_parameters(node)
-      node.default['gitlab-patroni']['patroni']['config']['postgresql']['listen'] = node['gitlab-patroni']['postgresql']['listen_address']
-      node.default['gitlab-patroni']['patroni']['config']['postgresql']['parameters'] = node['gitlab-patroni']['postgresql']['parameters']
+      node['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
+      node['gitlab-patroni']['patroni']['config']['postgresql']['listen'] = node['gitlab-patroni']['postgresql']['listen_address']
+      node['gitlab-patroni']['patroni']['config']['postgresql']['parameters'] = node['gitlab-patroni']['postgresql']['parameters']
+      node
     end
 
     def assign_postgresql_users(node)
@@ -37,11 +45,18 @@ module GitlabPatroni
         password = params['password']
         options  = params['options']
 
-        node.default['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username]['password'] = password
-        node.default['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username]['options'] = options
-        node.default['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['username'] = username
-        node.default['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['password'] = password
+        node['gitlab-patroni']['patroni']['config']['bootstrap']['users'] ||= {}
+        node['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username] ||= {}
+        node['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username]['password'] = password
+        node['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username]['options'] = options
+
+        node['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
+        node['gitlab-patroni']['patroni']['config']['postgresql']['authentication'] ||= {}
+        node['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type] ||= {}
+        node['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['username'] = username
+        node['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['password'] = password
       end
+      node
     end
   end
 end

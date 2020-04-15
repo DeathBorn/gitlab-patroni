@@ -4,8 +4,16 @@
 #
 # Copyright:: 2018, GitLab Inc.
 
-postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
-postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
+# We can't have secrets merging inside `AttributesHelper` because `get_secrets` is not
+# designed to work inside a module
+secrets_hash = node['gitlab-patroni']['secrets']
+secrets      = get_secrets(secrets_hash['backend'], secrets_hash['path'], secrets_hash['key'])
+patroni_conf = node.to_hash
+patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni'])
+patroni_conf = GitlabPatroni::AttributesHelper.populate_missing_values(patroni_conf)
+
+postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(patroni_conf)
+postgresql_config_directory = patroni_conf['gitlab-patroni']['postgresql']['config_directory']
 
 directory postgresql_config_directory do
   recursive true
@@ -14,7 +22,7 @@ end
 user postgresql_helper.postgresql_user do
   home postgresql_config_directory
   manage_home true
-  not_if { node['etc']['passwd'].key?(postgresql_helper.postgresql_user) }
+  not_if { patroni_conf['etc']['passwd'].key?(postgresql_helper.postgresql_user) }
 end
 
 directory postgresql_config_directory do
@@ -28,7 +36,7 @@ package 'apt-transport-https'
 apt_repository 'postgresql' do
   uri          'https://download.postgresql.org/pub/repos/apt/'
   components   ['main', postgresql_helper.version]
-  distribution "#{node['lsb']['codename']}-pgdg"
+  distribution "#{patroni_conf['lsb']['codename']}-pgdg"
   key 'https://download.postgresql.org/pub/repos/apt/ACCC4CF8.asc'
   cache_rebuild true
 end
@@ -57,7 +65,7 @@ cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
 end
 
 file "#{postgresql_config_directory}/cacert.pem" do
-  content node['gitlab-patroni']['postgresql']['ssl_ca']
+  content patroni_conf['gitlab-patroni']['postgresql']['ssl_ca']
   mode '0600'
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
@@ -65,7 +73,7 @@ file "#{postgresql_config_directory}/cacert.pem" do
 end
 
 file "#{postgresql_config_directory}/server.crt" do
-  content node['gitlab-patroni']['postgresql']['ssl_cert']
+  content patroni_conf['gitlab-patroni']['postgresql']['ssl_cert']
   mode '0600'
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
@@ -73,7 +81,7 @@ file "#{postgresql_config_directory}/server.crt" do
 end
 
 file "#{postgresql_config_directory}/server.key" do
-  content node['gitlab-patroni']['postgresql']['ssl_key']
+  content patroni_conf['gitlab-patroni']['postgresql']['ssl_key']
   mode '0600'
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
@@ -81,18 +89,18 @@ file "#{postgresql_config_directory}/server.key" do
 end
 
 sysctl 'kernel.shmmax' do
-  value node['gitlab-patroni']['postgresql']['shmmax']
+  value patroni_conf['gitlab-patroni']['postgresql']['shmmax']
 end
 
 sysctl 'kernel.shmall' do
-  value node['gitlab-patroni']['postgresql']['shmall']
+  value patroni_conf['gitlab-patroni']['postgresql']['shmall']
 end
 
 sem = [
-  node['gitlab-patroni']['postgresql']['semmsl'],
-  node['gitlab-patroni']['postgresql']['semmns'],
-  node['gitlab-patroni']['postgresql']['semopm'],
-  node['gitlab-patroni']['postgresql']['semmni'],
+  patroni_conf['gitlab-patroni']['postgresql']['semmsl'],
+  patroni_conf['gitlab-patroni']['postgresql']['semmns'],
+  patroni_conf['gitlab-patroni']['postgresql']['semopm'],
+  patroni_conf['gitlab-patroni']['postgresql']['semmni'],
 ].join(' ')
 sysctl 'kernel.sem' do
   value sem

@@ -4,8 +4,16 @@
 #
 # Copyright:: 2019, GitLab Inc.
 
-postgresql_helper = GitlabPatroni::PostgresqlHelper.new(node)
-scripts_directory = "#{node['gitlab-patroni']['patroni']['config_directory']}/scripts"
+# We can't have secrets merging inside `AttributesHelper` because `get_secrets` is not
+# designed to work inside a module
+secrets_hash = node['gitlab-patroni']['secrets']
+secrets      = get_secrets(secrets_hash['backend'], secrets_hash['path'], secrets_hash['key'])
+patroni_conf = node.to_hash
+patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni'])
+patroni_conf = GitlabPatroni::AttributesHelper.populate_missing_values(patroni_conf)
+
+postgresql_helper = GitlabPatroni::PostgresqlHelper.new(patroni_conf)
+scripts_directory = "#{patroni_conf['gitlab-patroni']['patroni']['config_directory']}/scripts"
 
 directory scripts_directory do
   owner postgresql_helper.postgresql_user
@@ -23,7 +31,7 @@ template "#{scripts_directory}/analyze-db.sh" do
   source "#{File.basename(name)}.erb"
   mode '0754'
   variables(
-    statistics_targets: node['gitlab-patroni']['patroni']['post_failover']['analyze_db']['statistics_targets']
+    statistics_targets: patroni_conf['gitlab-patroni']['patroni']['post_failover']['analyze_db']['statistics_targets']
   )
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group

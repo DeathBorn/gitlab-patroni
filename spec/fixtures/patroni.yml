@@ -38,6 +38,9 @@ bootstrap:
       - replication
 tags: {}
 postgresql:
+  wal_e:
+    command: "/var/opt/gitlab/patroni/scripts/wale-restore.sh"
+    restore_cmd: "/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch"
   data_dir: "/var/opt/gitlab/postgresql/data"
   config_dir: "/var/opt/gitlab/postgresql"
   bin_dir: "/usr/lib/postgresql/9.6/bin"
@@ -55,6 +58,3 @@ postgresql:
       username: gitlab-replicator
       password: replication-password
   connect_address: 127.0.0.1:5433
-  wal_e:
-    command: "/var/opt/gitlab/patroni/scripts/wale-restore.sh"
-    restore_cmd: "/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch"
