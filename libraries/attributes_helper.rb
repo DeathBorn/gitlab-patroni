@@ -7,6 +7,7 @@ module GitlabPatroni
       patroni_conf = assign_postgresql_parameters(patroni_conf)
       patroni_conf = assign_postgresql_users(patroni_conf)
       patroni_conf = assign_connect_addresses(patroni_conf)
+      patroni_conf
     end
 
     private
@@ -17,7 +18,7 @@ module GitlabPatroni
       patroni_listen_port  = node['gitlab-patroni']['patroni']['config']['restapi']['listen'].split(':').last
 
       node['gitlab-patroni']['patroni']['config']['restapi'] ||= {}
-      node['gitlab-patroni']['patroni']['config']['restapi']['connect_address']    = "#{address_detector.ipaddress}:#{patroni_listen_port}"
+      node['gitlab-patroni']['patroni']['config']['restapi']['connect_address'] = "#{address_detector.ipaddress}:#{patroni_listen_port}"
 
       node['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
       node['gitlab-patroni']['patroni']['config']['postgresql']['connect_address'] = "#{address_detector.ipaddress}:#{postgres_listen_port}"
@@ -26,7 +27,7 @@ module GitlabPatroni
 
     def assign_postgresql_directories(node)
       node['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
-      node['gitlab-patroni']['patroni']['config']['postgresql']['data_dir']   = node['gitlab-patroni']['postgresql']['data_directory']
+      node['gitlab-patroni']['patroni']['config']['postgresql']['data_dir'] = node['gitlab-patroni']['postgresql']['data_directory']
       node['gitlab-patroni']['patroni']['config']['postgresql']['config_dir'] = node['gitlab-patroni']['postgresql']['config_directory']
       node['gitlab-patroni']['patroni']['config']['postgresql']['bin_dir'] = node['gitlab-patroni']['postgresql']['bin_directory']
       node
