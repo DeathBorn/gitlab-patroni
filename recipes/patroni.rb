@@ -178,6 +178,28 @@ template "#{node['gitlab-patroni']['postgresql']['config_directory']}/.pgpass" d
   mode '0600'
 end
 
+cron 'Snapshot Start Backup' do
+  action :create
+  minute '0'
+  hour '*/4'
+  user 'gitlab-psql'
+  command %W{
+    gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&  
+    gitlab-psql -c "select pg_start_backup('');"
+  }.join(' ')
+end
+
+cron 'Snapshot Stop Backup' do
+  action :create
+  minute '15'
+  hour '*/4'
+  user 'gitlab-psql'
+  command %W{
+    gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&  
+    gitlab-psql -c "select pg_stop_backup('');"
+  }.join(' ')
+end
+
 include_recipe 'logrotate::default'
 
 {
