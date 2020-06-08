@@ -181,22 +181,22 @@ end
 cron 'Snapshot Start Backup' do
   action :create
   minute '0'
-  hour '*/4'
+  hour '*/6'
   user 'gitlab-psql'
   command %W{
     gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&  
-    gitlab-psql -c "select pg_start_backup('');"
+    gitlab-psql -c "select pg_start_backup("BACKUP",FALSE, FALSE);"
   }.join(' ')
 end
 
 cron 'Snapshot Stop Backup' do
   action :create
-  minute '15'
-  hour '*/4'
+  minute '20'
+  hour '*/6'
   user 'gitlab-psql'
   command %W{
     gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&  
-    gitlab-psql -c "select pg_stop_backup('');"
+    gitlab-psql -c "select pg_stop_backup("BACKUP",FALSE, FALSE);"
   }.join(' ')
 end
 
