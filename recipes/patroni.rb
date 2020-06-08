@@ -183,10 +183,10 @@ cron 'Snapshot Start Backup' do
   minute '0'
   hour '*/6'
   user 'gitlab-psql'
-  command %W{
-    gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&  
-    gitlab-psql -c "select pg_start_backup("BACKUP",FALSE, FALSE);"
-  }.join(' ')
+  command [
+    "gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&",
+    'gitlab-psql -c "select pg_start_backup("BACKUP",FALSE, FALSE);"'
+  ].join(' ')
 end
 
 cron 'Snapshot Stop Backup' do
@@ -194,10 +194,10 @@ cron 'Snapshot Stop Backup' do
   minute '20'
   hour '*/6'
   user 'gitlab-psql'
-  command %W{
-    gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&  
-    gitlab-psql -c "select pg_stop_backup("BACKUP",FALSE, FALSE);"
-  }.join(' ')
+  command [
+    "gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' &&",
+    'gitlab-psql -c "select pg_stop_backup("BACKUP",FALSE, FALSE);"'
+  ].join(' ')
 end
 
 include_recipe 'logrotate::default'
