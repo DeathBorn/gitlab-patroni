@@ -72,6 +72,9 @@ verifier:
           secret_source: chef_vault
           secret_bag: secrets
           item: gitlab-consul-cluster
+  prometheus:
+    labels:
+      env: test
 
 suites:
   - name: patroni-1
