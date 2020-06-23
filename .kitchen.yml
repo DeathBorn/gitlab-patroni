@@ -61,6 +61,9 @@ verifier:
           secret_source: chef_vault
           secret_bag: secrets
           item: gitlab-consul-cluster
+  prometheus:
+    labels:
+      env: test
 
 # Remember to duplicate any changes here to the DO and CI (also DO) configs.
 suites:
