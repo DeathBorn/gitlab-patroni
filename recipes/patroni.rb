@@ -34,6 +34,10 @@ python_virtualenv install_directory do
   pip_version node['gitlab-patroni']['patroni']['pip_version']
 end
 
+python_package 'psycopg2' do
+  version node['gitlab-patroni']['patroni']['psycopg2_version']
+end
+
 python_package 'patroni[consul]' do
   version node['gitlab-patroni']['patroni']['version']
 end
