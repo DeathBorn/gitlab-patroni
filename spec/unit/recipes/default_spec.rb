@@ -180,6 +180,10 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to create_python_virtualenv('/opt/patroni').with(pip_version: '18.0')
     end
 
+    it 'installs Psycopg2' do
+      expect(chef_run).to install_python_package('psycopg2').with(version: '2.8.5')
+    end
+
     it 'installs Patroni' do
       expect(chef_run).to install_python_package('patroni[consul]').with(version: '1.5.0')
     end

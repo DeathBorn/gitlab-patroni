@@ -31,6 +31,7 @@ default['gitlab-patroni']['postgresql']['parameters']['log_destination'] = 'sysl
 default['gitlab-patroni']['patroni']['version'] = '1.5.0'
 default['gitlab-patroni']['patroni']['python_runtime_version'] = '3'
 default['gitlab-patroni']['patroni']['pip_version'] = '18.0'
+default['gitlab-patroni']['patroni']['psycopg2_version'] = '2.8.5'
 default['gitlab-patroni']['patroni']['config_directory'] = '/var/opt/gitlab/patroni'
 default['gitlab-patroni']['patroni']['install_directory'] = '/opt/patroni'
 default['gitlab-patroni']['patroni']['log_directory'] = '/var/log/gitlab/patroni'
