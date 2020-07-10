@@ -35,9 +35,6 @@ end
 
 package "postgresql-#{postgresql_helper.version}"
 package "postgresql-#{postgresql_helper.version}-repack"
-package "postgresql-#{postgresql_helper.previous_version}-repack" do
-  action :purge
-end
 # Needed by psycopg2 >= 2.8 which is a dependency of Patroni
 package "postgresql-server-dev-#{postgresql_helper.version}"
 
