@@ -21,9 +21,5 @@ module GitlabPatroni
     def version
       node['gitlab-patroni']['postgresql']['version']
     end
-
-    def previous_version
-      node['gitlab-patroni']['postgresql']['previous_version']
-    end
   end
 end
