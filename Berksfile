@@ -6,5 +6,5 @@ cookbook 'gitlab_secrets', '~> 0.0.0', git: 'git@ops.gitlab.net:gitlab-cookbooks
 cookbook 'consul', '~> 3.3'
 
 group :test do
-  cookbook 'gitlab_consul', '~> 1.0.2', git: 'git@ops.gitlab.net:gitlab-cookbooks/gitlab_consul.git'
+  cookbook 'gitlab_consul', '~> 1.1.0', git: 'git@ops.gitlab.net:gitlab-cookbooks/gitlab_consul.git'
 end
