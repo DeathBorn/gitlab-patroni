@@ -36,6 +36,9 @@ bootstrap:
       password: replication-password
       options:
       - replication
+    pgbouncer:
+      password: hunter2
+      options: []
 tags:
   nofailover: true
   noloadbalance: true

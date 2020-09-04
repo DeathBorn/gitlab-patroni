@@ -36,6 +36,9 @@ bootstrap:
       password: replication-password
       options:
       - replication
+    pgbouncer:
+      password: hunter2
+      options: []
 tags: {}
 postgresql:
   data_dir: "/var/opt/gitlab/postgresql/data"

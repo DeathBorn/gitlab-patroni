@@ -35,12 +35,17 @@ module GitlabPatroni
       node['gitlab-patroni']['patroni']['users'].each do |type, params|
         username = params['username']
         password = params['password']
-        options  = params['options']
+        options  = params['options'] || []
+
+        if %w(superuser replication rewind).include?(type)
+          node.default['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['username'] = username
+          node.default['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['password'] = password
+        else
+          username = type
+        end
 
         node.default['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username]['password'] = password
         node.default['gitlab-patroni']['patroni']['config']['bootstrap']['users'][username]['options'] = options
-        node.default['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['username'] = username
-        node.default['gitlab-patroni']['patroni']['config']['postgresql']['authentication'][type]['password'] = password
       end
     end
   end
