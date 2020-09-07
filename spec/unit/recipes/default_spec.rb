@@ -46,7 +46,7 @@ describe 'gitlab-patroni::default' do
     it 'adds PostgreSQL APT repository' do
       expect(chef_run).to add_apt_repository('postgresql').with(
         uri: 'https://download.postgresql.org/pub/repos/apt/',
-        components: ['main', '11'],
+        components: %w(main 11),
         distribution: 'xenial-pgdg',
         key: ['https://download.postgresql.org/pub/repos/apt/ACCC4CF8.asc'],
         cache_rebuild: true
