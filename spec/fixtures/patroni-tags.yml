@@ -45,7 +45,7 @@ tags:
 postgresql:
   data_dir: "/var/opt/gitlab/postgresql/data"
   config_dir: "/var/opt/gitlab/postgresql"
-  bin_dir: "/usr/lib/postgresql/9.6/bin"
+  bin_dir: "/usr/lib/postgresql/11/bin"
   listen: 0.0.0.0:5433
   parameters:
     port: 5433

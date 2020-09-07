@@ -40,13 +40,13 @@ describe 'gitlab-patroni::default' do
     end
 
     it 'installs postgresql-server-dev' do
-      expect(chef_run).to install_package('postgresql-server-dev-9.6')
+      expect(chef_run).to install_package('postgresql-server-dev-11')
     end
 
     it 'adds PostgreSQL APT repository' do
       expect(chef_run).to add_apt_repository('postgresql').with(
         uri: 'https://download.postgresql.org/pub/repos/apt/',
-        components: ['main', '9.6'],
+        components: ['main', '11'],
         distribution: 'xenial-pgdg',
         key: ['https://download.postgresql.org/pub/repos/apt/ACCC4CF8.asc'],
         cache_rebuild: true
@@ -54,11 +54,11 @@ describe 'gitlab-patroni::default' do
     end
 
     it 'installs postgresql' do
-      expect(chef_run).to install_package('postgresql-9.6')
+      expect(chef_run).to install_package('postgresql-11')
     end
 
     it 'installs pg_repack extension' do
-      expect(chef_run).to install_package('postgresql-9.6-repack')
+      expect(chef_run).to install_package('postgresql-11-repack')
     end
 
     it 'creates postgresql.conf if it is missing' do
