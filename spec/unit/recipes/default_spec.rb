@@ -365,7 +365,7 @@ YML
 
     it 'creates .pgpass' do
       pgpass_path    = '/var/opt/gitlab/postgresql/.pgpass'
-      pgpass_content = 'localhost:5433:*:gitlab-superuser:superuser-password'
+      pgpass_content = 'localhost:5432:*:gitlab-superuser:superuser-password'
 
       expect(chef_run).to create_template(pgpass_path).with(owner: 'postgres', group: 'postgres', mode: '0600')
       expect(chef_run).to render_file(pgpass_path).with_content(pgpass_content)
@@ -382,7 +382,7 @@ else
   privilege_drop="-u postgres"
 fi
 
-cd /tmp; exec chpst ${privilege_drop} -U postgres psql -p 5433 -h localhost -U gitlab-superuser -d gitlabhq_production "$@"
+cd /tmp; exec chpst ${privilege_drop} -U postgres psql -p 5432 -h localhost -U gitlab-superuser -d gitlabhq_production "$@"
       STR
 
       expect(chef_run).to create_template(gitlab_psql_path).with(mode: '0777')

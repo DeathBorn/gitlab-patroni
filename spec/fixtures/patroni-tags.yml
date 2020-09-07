@@ -46,9 +46,9 @@ postgresql:
   data_dir: "/var/opt/gitlab/postgresql/data"
   config_dir: "/var/opt/gitlab/postgresql"
   bin_dir: "/usr/lib/postgresql/11/bin"
-  listen: 0.0.0.0:5433
+  listen: 0.0.0.0:5432
   parameters:
-    port: 5433
+    port: 5432
     ssl: 'off'
     ssl_ciphers: HIGH:MEDIUM:+3DES:!aNULL:!SSLv3:!TLSv1
     log_destination: syslog
@@ -59,7 +59,7 @@ postgresql:
     replication:
       username: gitlab-replicator
       password: replication-password
-  connect_address: 127.0.0.1:5433
+  connect_address: 127.0.0.1:5432
   wal_e:
     command: "/var/opt/gitlab/patroni/scripts/wale-restore.sh"
     restore_cmd: "/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch"
