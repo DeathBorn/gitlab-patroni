@@ -418,13 +418,5 @@ cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/p
         frequency: 'daily'
       )
     end
-
-    it 'creates cron to start pg backup for GCP snapshot' do
-      expect(chef_run).to create_cron('GCP snapshot pg_start_backup').with(command: "gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' && gitlab-psql -c \"SELECT pg_start_backup('GCP snapshot', FALSE, FALSE);\"")
-    end
-
-    it 'creates cron to stop pg backup for GCP snapshot' do
-      expect(chef_run).to create_cron('GCP snapshot pg_stop_backup').with(command: "gitlab-psql -tc 'SELECT pg_is_in_recovery()' | grep 'f' && gitlab-psql -c \"SELECT pg_stop_backup(FALSE, FALSE);\"")
-    end
   end
 end
