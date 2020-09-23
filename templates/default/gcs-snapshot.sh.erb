@@ -1,0 +1,23 @@
+#!/bin/bash
+
+exec &> >(tee -a "<%= @log_path_prefix %>-$(date +%Y%m%d-%H%M%S).log")
+
+mkfifo /tmp/snapshot-start-backup /tmp/snapshot-stop-backup &>/dev/null
+
+# pg_{start,stop}_backup have to be executed on the same connection
+gitlab-psql -f /tmp/snapshot-start-backup -f /tmp/snapshot-stop-backup &
+
+echo "SELECT pg_start_backup('GCS snapshot', TRUE, FALSE);" > /tmp/snapshot-start-backup
+
+gcloud auth activate-service-account --key-file=<%= @gcs_credentials_path %>
+gcloud config set project <%= node['gce']['project']['projectId'] %>
+gcloud config set compute/zone <%= node['gce']['instance']['zone'].split('/').last %>
+gcloud compute disks snapshot <%= node['gce']['instance']['name'] %>-data --description="Snapshot created by $0 on $(date)" || {
+  echo "Snapshot failed!"
+  exit 1
+}
+
+echo "SELECT pg_stop_backup(FALSE, FALSE);" > /tmp/snapshot-stop-backup
+
+id="gcs-snapshot-$(date +%Y%m%d-%H%M)"
+curl -X POST http://localhost:9091/metrics/job/gcs-snapshot/id/${id}/status/1
