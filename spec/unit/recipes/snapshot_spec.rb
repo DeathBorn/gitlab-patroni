@@ -38,7 +38,10 @@ describe 'gitlab-patroni::snapshot' do
   end
 
   it 'creates cron to start pg backup for GCP snapshot' do
-    expect(chef_run).to create_cron('GCS snapshot').with(command: '/usr/local/bin/gcs-snapshot.sh')
+    expect(chef_run).to create_cron('GCS snapshot').with(
+      command: '/usr/local/bin/gcs-snapshot.sh',
+      path: '/usr/local/sbin:/usr/sbin/:/sbin:/usr/local/bin:/usr/bin:/bin'
+    )
   end
 
   it 'rotates the logs' do
