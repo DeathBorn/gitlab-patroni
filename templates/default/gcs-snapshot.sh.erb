@@ -2,6 +2,8 @@
 
 exec &> >(tee -a "<%= @log_path_prefix %>-$(date +%Y%m%d-%H%M%S).log")
 
+# Start with fresh FIFOs
+rm -f /tmp/snapshot-start-backup /tmp/snapshot-stop-backup
 mkfifo /tmp/snapshot-start-backup /tmp/snapshot-stop-backup &>/dev/null
 
 # pg_{start,stop}_backup have to be executed on the same connection
