@@ -16,6 +16,12 @@ describe 'gitlab-patroni::snapshot' do
       node.normal['gce']['project']['projectId'] = 'gitlab-rspec'
       node.normal['gce']['instance']['zone'] = 'project/123/zone/us-east-66c'
       node.normal['gce']['instance']['name'] = 'patroni-rspec-06'
+
+      node.normal['prometheus']['labels'] = {
+        'shard' => 'main',
+        'tier' => 'db',
+        'type' => 'patroni'
+      }
     end.converge(described_recipe)
   end
 
