@@ -40,7 +40,20 @@ mkfifo /tmp/snapshot-start-backup /tmp/snapshot-stop-backup &>/dev/null
 # pg_{start,stop}_backup have to be executed on the same connection
 gitlab-psql -f /tmp/snapshot-start-backup -f /tmp/snapshot-stop-backup &
 
-echo "SELECT pg_start_backup('GCS snapshot', TRUE, FALSE);" > /tmp/snapshot-start-backup
+# Since gitlab-psql is in the background, gcloud snapshot could start even before pg_start_backup has returned,
+# hence we add the COPY query that would run after pg_start_backup returns and leave a temp file as an evidence of execution.
+rm -f /tmp/ready-to-snapshot
+echo "SELECT pg_start_backup('GCS snapshot', TRUE, FALSE); COPY (SELECT 1) TO '/tmp/ready-to-snapshot'" > /tmp/snapshot-start-backup
+
+loop_max_time=$(date -d '5 minutes' +%s)
+while [[ ! -f /tmp/ready-to-snapshot ]]; do
+  if [[ $(date +%s) -gt $loop_max_time ]]; then
+    echo "Loop checking for /tmp/ready-to-snapshot ran for 5 minutes, exiting ..."
+    exit 1
+  fi
+
+  sleep 0.5
+done
 
 gcloud auth activate-service-account --key-file=<%= @gcs_credentials_path %>
 gcloud config set project <%= node['gce']['project']['projectId'] %>
@@ -58,6 +71,8 @@ PROM
 }
 
 echo "SELECT pg_stop_backup(FALSE, FALSE);" > /tmp/snapshot-stop-backup
+# Wait for gitlab-psql to return from the background
+wait -n %1
 
 # Push finish of snapshot to pushgateway
 cat <<PROM | pushgateway
