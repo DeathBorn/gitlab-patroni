@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec &> >(tee -a "/var/log/gitlab/postgresql/gcs-snapshot-$(date +%Y%m%d-%H%M%S).log")
+exec &> >(tee -a "/var/log/gitlab/postgresql/gcs-snapshot.log")
 
 # GitLab Job metric settings
 # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/uncategorized/job_completion.md
@@ -15,6 +15,7 @@ pushgateway(){
   curl -siv --data-binary @- "${url}"
 }
 
+echo "============== $(date +%Y%m%d-%H%M%S)"
 
 # Push start of snapshot to pushgateway
 cat <<PROM | pushgateway
