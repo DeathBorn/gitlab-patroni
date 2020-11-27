@@ -10,4 +10,4 @@ for i in $(seq 1 5); do
   sleep 60
 done
 
-gitlab-psql -c 'VACUUM VERBOSE'
+vacuumdb -h localhost -p 5432 -d gitlabhq_production -U gitlab-superuser-20200604_224119 --analyze-only --jobs=16
