@@ -27,14 +27,6 @@ cookstyle:
   script:
     - make cookstyle
 
-foodcritic:
-  stage: test
-  cache:
-    paths:
-      - $BUNDLE_PATH
-  script:
-    - make foodcritic
-
 rspec-test-job:
   stage: test
   coverage: "/^\\s*Touch\\sCoverage:\\s*(\\d+\\.\\d+)%/"
