@@ -56,9 +56,7 @@ while [[ ! -f /tmp/ready-to-snapshot ]]; do
 done
 
 gcloud auth activate-service-account --key-file=/etc/gitlab/gcs-snapshot.json
-gcloud config set project gitlab-rspec
-gcloud config set compute/zone us-east-66c
-gcloud compute disks snapshot patroni-rspec-06-data --description="Snapshot created by $0 on $(date)" || {
+gcloud compute disks snapshot patroni-rspec-06-data --project=gitlab-rspec --zone=us-east-66c --description="Snapshot created by $0 on $(date)" || {
   echo "Snapshot failed!"
 
   cat <<PROM | pushgateway

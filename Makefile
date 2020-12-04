@@ -54,15 +54,11 @@ gems:	### Install latest versions of all gems
 	bundle install --jobs $$(nproc) --clean --path $(BUNDLE_PATH)
 
 .PHONY: lint
-lint:	cookstyle foodcritic
+lint:	cookstyle
 
 .PHONY: cookstyle
 cookstyle:
 	bundle exec cookstyle
-
-.PHONY: foodcritic
-foodcritic:
-	bundle exec foodcritic .
 
 .PHONY: rspec
 rspec:

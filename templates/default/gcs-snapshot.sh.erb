@@ -56,9 +56,7 @@ while [[ ! -f /tmp/ready-to-snapshot ]]; do
 done
 
 gcloud auth activate-service-account --key-file=<%= @gcs_credentials_path %>
-gcloud config set project <%= node['gce']['project']['projectId'] %>
-gcloud config set compute/zone <%= node['gce']['instance']['zone'].split('/').last %>
-gcloud compute disks snapshot <%= node['gce']['instance']['name'] %>-data --description="Snapshot created by $0 on $(date)" || {
+gcloud compute disks snapshot <%= node['gce']['instance']['name'] %>-data --project=<%= node['gce']['project']['projectId'] %> --zone=<%= node['gce']['instance']['zone'].split('/').last %> --description="Snapshot created by $0 on $(date)" || {
   echo "Snapshot failed!"
 
   cat <<PROM | pushgateway

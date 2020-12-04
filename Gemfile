@@ -8,7 +8,6 @@ group :test do
   gem 'chefspec', '~> 7.2'
   gem 'cookstyle'
   gem 'fauxhai'
-  gem 'foodcritic', '~> 14.1'
   gem 'kitchen-digitalocean', '~> 0.10'
   gem 'kitchen-inspec'
   gem 'kitchen-vagrant'

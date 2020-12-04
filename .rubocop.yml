@@ -32,3 +32,6 @@ Style/TrailingCommaInHashLiteral:
 
 Style/ClassAndModuleChildren:
   Enabled: false
+
+Chef/Correctness/PropertyWithoutType:
+  Enabled: false
