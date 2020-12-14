@@ -18,3 +18,4 @@ Berksfile.lock
 # Bundler
 Gemfile.lock
 .bundle/*
+/vendor

@@ -28,6 +28,9 @@ module GitlabPatroni
 
     def assign_postgresql_parameters(node)
       node.default['gitlab-patroni']['patroni']['config']['postgresql']['listen'] = node['gitlab-patroni']['postgresql']['listen_address']
+      unless node['gitlab-patroni']['postgresql']['pg_ctl_timeout'].nil?
+        node.default['gitlab-patroni']['patroni']['config']['postgresql']['pg_ctl_timeout'] = node['gitlab-patroni']['postgresql']['pg_ctl_timeout']
+      end
       node.default['gitlab-patroni']['patroni']['config']['postgresql']['parameters'] = node['gitlab-patroni']['postgresql']['parameters']
     end
 
