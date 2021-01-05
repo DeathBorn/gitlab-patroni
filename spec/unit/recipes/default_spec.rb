@@ -157,8 +157,8 @@ describe 'gitlab-patroni::default' do
         expect(chef_run).to create_cookbook_file('/var/opt/gitlab/patroni/scripts/wale-restore.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
       end
 
-      it 'creates analyze-db script' do
-        expect(chef_run).to create_template('/var/opt/gitlab/patroni/scripts/analyze-db.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
+      it 'creates post-failover-maintenance script' do
+        expect(chef_run).to create_template('/var/opt/gitlab/patroni/scripts/post-failover-maintenance.sh').with(owner: 'postgres', group: 'postgres', mode: '0754')
       end
     end
   end

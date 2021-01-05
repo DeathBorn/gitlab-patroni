@@ -10,6 +10,4 @@ for i in $(seq 1 5); do
   sleep 60
 done
 
-for statistics_target in <%= @statistics_targets.join(' ') %>; do
-  echo "SET default_statistics_target = ${statistics_target}; ANALYZE" | gitlab-psql
-done
+vacuumdb --host=<%= @host %> --port=<%= @port %> --dbname=<%= @db_name %> --username=<%= @superuser %> --analyze-only --jobs=<%= @jobs %> --echo
