@@ -38,6 +38,10 @@ python_package 'psycopg2' do
   version node['gitlab-patroni']['patroni']['psycopg2_version']
 end
 
+python_package 'pg_activity' do
+  version node['gitlab-patroni']['patroni']['pg_activity_version']
+end
+
 python_package 'patroni[consul]' do
   version node['gitlab-patroni']['patroni']['version']
 end

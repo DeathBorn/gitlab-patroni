@@ -184,6 +184,10 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to install_python_package('psycopg2').with(version: '2.8.5')
     end
 
+    it 'installs pg_activity' do
+      expect(chef_run).to install_python_package('pg_activity').with(version: '1.6.2')
+    end
+
     it 'installs Patroni' do
       expect(chef_run).to install_python_package('patroni[consul]').with(version: '1.5.0')
     end
