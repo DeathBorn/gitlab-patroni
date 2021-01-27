@@ -3,6 +3,8 @@
 
 # gitlab-patroni
 
+TODO: Remove this line. -- @nnelson, 2020-01-27
+
 Installs and configures [Patroni](https://github.com/zalando/patroni) for GitLab infrastructure.
 
 ## Using
