@@ -28,10 +28,12 @@ package 'build-essential'
 
 python_runtime node['gitlab-patroni']['patroni']['python_runtime_version'] do
   pip_version node['gitlab-patroni']['patroni']['pip_version']
+  get_pip_url node['gitlab-patroni']['patroni']['get_pip_url']
 end
 
 python_virtualenv install_directory do
   pip_version node['gitlab-patroni']['patroni']['pip_version']
+  get_pip_url node['gitlab-patroni']['patroni']['get_pip_url']
 end
 
 python_package 'psycopg2' do
