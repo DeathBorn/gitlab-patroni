@@ -5,7 +5,7 @@
 # Copyright:: 2018, GitLab Inc.
 
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
-postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
+postgresql_config_directory = postgresql_helper.postgresql_user_home
 
 directory postgresql_config_directory do
   recursive true

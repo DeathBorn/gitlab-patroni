@@ -14,6 +14,10 @@ module GitlabPatroni
       node['gitlab-patroni']['user']
     end
 
+    def postgresql_user_home
+      node['gitlab-patroni']['postgresql']['config_directory']
+    end
+
     def postgresql_port
       node['gitlab-patroni']['postgresql']['parameters']['port']
     end

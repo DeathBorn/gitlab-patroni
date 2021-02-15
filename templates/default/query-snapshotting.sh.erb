@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+while true; do
+  gitlab-psql -XAtc "COPY (
+    SELECT '<%= @node_name %>', NOW(), *
+    FROM pg_stat_activity
+    WHERE state = 'active' AND pid <> pg_backend_pid()
+  ) TO STDOUT DELIMITER ',' CSV" | \
+  sed "s/'.*'/'REDACTED'/g" | \
+  PGPASSFILE=<%= @pgpass_path %> psql -d <%= @database %> -h <%= @hostname %> -U <%= @username %> -Xc "COPY stat_activity_snapshots FROM STDIN DELIMITER ',' CSV"
+
+  sleep <%= @scrape_interval %>
+done
