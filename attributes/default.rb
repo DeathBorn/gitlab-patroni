@@ -80,7 +80,7 @@ default['gitlab-patroni']['snapshot']['gcs_credentials_path'] = '/etc/gitlab/gcs
 default['gitlab-patroni']['snapshot']['snapshot_script_path'] = '/usr/local/bin/gcs-snapshot.sh'
 default['gitlab-patroni']['snapshot']['log_path_prefix'] = '/var/log/gitlab/postgresql/gcs-snapshot'
 
-default['gitlab-patroni']['snapshot']['cron']['minute'] = 0
-default['gitlab-patroni']['snapshot']['cron']['hour'] = '*/12'
-default['gitlab-patroni']['snapshot']['analyze_script_path'] = '/usr/local/bin/analyze-table.sh'
-default['gitlab-patroni']['snapshot']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-table'
+default['gitlab-patroni']['analyze']['cron']['minute'] = 0
+default['gitlab-patroni']['analyze']['cron']['hour'] = '*/12'
+default['gitlab-patroni']['analyze']['analyze_script_path'] = '/usr/local/bin/analyze-table.sh'
+default['gitlab-patroni']['analyze']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-table'
