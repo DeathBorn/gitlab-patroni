@@ -15,6 +15,7 @@ postgresql_csvlog_path      = "#{postgresql_log_directory}/postgresql.csv"
 postgresql_superuser        = node['gitlab-patroni']['patroni']['users']['superuser']['username']
 patroni_config_path         = "#{config_directory}/patroni.yml"
 gitlab_patronictl_path      = '/usr/local/bin/gitlab-patronictl'
+gitlab_pg_activity_path     = '/usr/local/bin/gitlab-pg_activity'
 wale_log_path               = "#{postgresql_log_directory}/wale.log"
 postgresql_syslog_logging   = node['gitlab-patroni']['postgresql']['parameters']['log_destination'] == 'syslog'
 is_patroni_running_command  = "systemctl status patroni && #{gitlab_patronictl_path} list | grep #{node.name} | grep running"
@@ -79,6 +80,11 @@ template gitlab_patronictl_path do
     install_directory: install_directory,
     config_path: patroni_config_path
   )
+  mode '0777'
+end
+
+file 'gitlab-pg_activity.sh' do
+  path gitlab_pg_activity_path
   mode '0777'
 end
 
