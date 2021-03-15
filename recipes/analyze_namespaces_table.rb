@@ -1,17 +1,13 @@
-postgresql_helper    = GitlabPatroni::PostgresqlHelper.new(node)
-snapshot_script_path = node['gitlab-patroni']['analyze']['analyze_script_path']
-log_path_prefix      = node['gitlab-patroni']['analyze']['log_path_prefix']
+postgresql_helper   = GitlabPatroni::PostgresqlHelper.new(node)
+analyze_script_path = node['gitlab-patroni']['analyze']['analyze_script_path']
+log_path_prefix     = node['gitlab-patroni']['analyze']['log_path_prefix']
 
-template analyze_script_path do
-  source 'analyze-table.sh.erb'
-  variables(
-    gcs_credentials_path: gcs_credentials_path,
-    log_path_prefix: log_path_prefix
-  )
+file 'analyze-namespaces-table.sh' do
+  path analyze_script_path
   mode '0777'
 end
 
-cron 'DB_analyze_table' do
+cron 'analyze_namespaces_table' do
   minute node['gitlab-patroni']['analyze']['cron']['minute']
   hour node['gitlab-patroni']['analyze']['cron']['hour']
   user postgresql_helper.postgresql_user
@@ -22,7 +18,7 @@ end
 
 include_recipe 'logrotate::default'
 
-logrotate_app :db_analyze do
+logrotate_app :analyze_namespaces_table do
   path "#{log_path_prefix}*.log"
   options %w(missingok compress delaycompress notifempty)
   rotate 7

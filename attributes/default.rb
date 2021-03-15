@@ -82,5 +82,5 @@ default['gitlab-patroni']['snapshot']['log_path_prefix'] = '/var/log/gitlab/post
 
 default['gitlab-patroni']['analyze']['cron']['minute'] = 0
 default['gitlab-patroni']['analyze']['cron']['hour'] = '*/12'
-default['gitlab-patroni']['analyze']['analyze_script_path'] = '/usr/local/bin/analyze-table.sh'
-default['gitlab-patroni']['analyze']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-table'
+default['gitlab-patroni']['analyze']['analyze_script_path'] = '/usr/local/bin/analyze-namespaces-table.sh'
+default['gitlab-patroni']['analyze']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-namespaces-table'

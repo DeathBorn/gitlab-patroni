@@ -9,4 +9,4 @@ for i in $(seq 1 5); do
   sleep 60
 done
 
-gitlab-psql -c "ANALYZE namespaces;"
+gitlab-psql --command="ANALYZE namespaces;"
