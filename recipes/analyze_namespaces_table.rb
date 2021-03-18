@@ -2,7 +2,8 @@ postgresql_helper   = GitlabPatroni::PostgresqlHelper.new(node)
 analyze_script_path = node['gitlab-patroni']['analyze']['analyze_script_path']
 log_path_prefix     = node['gitlab-patroni']['analyze']['log_path_prefix']
 
-file 'analyze-namespaces-table.sh' do
+file 'files/default/analyze-namespaces-table.sh' do
+  content File.read('files/default/analyze-namespaces-table.sh')
   path analyze_script_path
   mode '0777'
 end
