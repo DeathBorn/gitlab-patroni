@@ -20,8 +20,7 @@ describe 'gitlab-patroni::analyze_namespaces_table' do
   it 'creates the analyze-namespaces-table script' do
     path = '/usr/local/bin/analyze-namespaces-table.sh'
 
-    expect(chef_run).to create_file(path).with(mode: '0777')
-    expect(chef_run).to render_file(path).with_content(File.read('spec/fixtures/analyze-namespaces-table.sh'))
+    expect(chef_run).to create_cookbook_file(path).with(owner: 'postgres', group: 'postgres', mode: '0777')
   end
 
   it 'creates cron to start analyze namespaces' do
