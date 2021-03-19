@@ -426,7 +426,11 @@ cd /tmp; exec chpst -U postgres /opt/patroni/bin/patronictl -c /var/opt/gitlab/p
 
     it 'creates gitlab-pg_activity' do
       gitlab_pg_activity_path = '/usr/local/bin/gitlab-pg_activity'
-      expect(chef_run).to create_file(gitlab_pg_activity_path).with(mode: '0777')
+      mock_gitlab_pg_activity_path = 'spec/fixtures/gitlab-pg_activity.sh'
+      mock_script_content = File.read(mock_gitlab_pg_activity_path)
+
+      expect(chef_run).to create_cookbook_file(gitlab_pg_activity_path).with(mode: '0777')
+      expect(chef_run).to render_file(gitlab_pg_activity_path).with_content(mock_script_content)
     end
 
     it 'rotates Patroni logs' do

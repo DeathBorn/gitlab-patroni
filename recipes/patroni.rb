@@ -83,8 +83,8 @@ template gitlab_patronictl_path do
   mode '0777'
 end
 
-file 'gitlab-pg_activity.sh' do
-  path gitlab_pg_activity_path
+cookbook_file "#{gitlab_pg_activity_path}" do
+  source 'gitlab-pg_activity.sh'
   mode '0777'
 end
 
