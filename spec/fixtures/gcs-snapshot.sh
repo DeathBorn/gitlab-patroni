@@ -15,6 +15,12 @@ pushgateway(){
   curl -siv --data-binary @- "${url}"
 }
 
+stopbackup() {
+  echo "SELECT pg_stop_backup(FALSE, FALSE);" > /tmp/snapshot-stop-backup
+  # Wait for gitlab-psql to return from the background
+  wait -n %1
+}
+
 echo "============== $(date +%Y%m%d-%H%M%S)"
 
 # Push start of snapshot to pushgateway
@@ -65,12 +71,12 @@ gcloud compute disks snapshot patroni-rspec-06-data --project=gitlab-rspec --zon
 gitlab_job_failed{resource="${RESOURCE}"} 1
 PROM
 
+  stopbackup
+
   exit 1
 }
 
-echo "SELECT pg_stop_backup(FALSE, FALSE);" > /tmp/snapshot-stop-backup
-# Wait for gitlab-psql to return from the background
-wait -n %1
+stopbackup
 
 # Push finish of snapshot to pushgateway
 cat <<PROM | pushgateway
