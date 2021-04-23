@@ -35,3 +35,6 @@ Style/ClassAndModuleChildren:
 
 Chef/Correctness/PropertyWithoutType:
   Enabled: false
+
+Style/RedundantAssignment:
+  Enabled: false
