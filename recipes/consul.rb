@@ -9,7 +9,7 @@
 secrets_hash = node['gitlab-patroni']['secrets']
 secrets      = get_secrets(secrets_hash['backend'], secrets_hash['path'], secrets_hash['key'])
 patroni_conf = node.to_hash
-patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni'])
+patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni']).to_hash
 patroni_conf = GitlabPatroni::AttributesHelper.populate_missing_values(patroni_conf)
 
 check_interval = patroni_conf['gitlab-patroni']['patroni']['consul']['check_interval']

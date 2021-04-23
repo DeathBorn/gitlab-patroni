@@ -37,6 +37,7 @@ module GitlabPatroni
       patroni_conf['gitlab-patroni']['patroni']['config']['postgresql'] ||= {}
       patroni_conf['gitlab-patroni']['patroni']['config']['postgresql']['listen'] = patroni_conf['gitlab-patroni']['postgresql']['listen_address']
       patroni_conf['gitlab-patroni']['patroni']['config']['postgresql']['parameters'] = patroni_conf['gitlab-patroni']['postgresql']['parameters']
+
       unless patroni_conf['gitlab-patroni']['postgresql']['pg_ctl_timeout'].nil?
         patroni_conf['gitlab-patroni']['patroni']['config']['postgresql']['pg_ctl_timeout'] = patroni_conf['gitlab-patroni']['postgresql']['pg_ctl_timeout']
       end

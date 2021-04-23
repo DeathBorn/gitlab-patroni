@@ -9,7 +9,7 @@
 secrets_hash = node['gitlab-patroni']['secrets']
 secrets      = get_secrets(secrets_hash['backend'], secrets_hash['path'], secrets_hash['key'])
 patroni_conf = node.to_hash
-patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni'])
+patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni']).to_hash
 patroni_conf = GitlabPatroni::AttributesHelper.populate_missing_values(patroni_conf)
 
 postgresql_helper = GitlabPatroni::PostgresqlHelper.new(patroni_conf)
@@ -33,7 +33,7 @@ template "#{scripts_directory}/post-failover-maintenance.sh" do
   variables(
     port: postgresql_helper.postgresql_port,
     host: 'localhost',
-    superuser: node['gitlab-patroni']['patroni']['users']['superuser']['username'],
+    superuser: patroni_conf['gitlab-patroni']['patroni']['users']['superuser']['username'],
     db_name: 'gitlabhq_production',
     jobs: 16
   )

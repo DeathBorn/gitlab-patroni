@@ -9,7 +9,7 @@
 secrets_hash = node['gitlab-patroni']['secrets']
 secrets      = get_secrets(secrets_hash['backend'], secrets_hash['path'], secrets_hash['key'])
 patroni_conf = node.to_hash
-patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni'])
+patroni_conf['gitlab-patroni'] = Chef::Mixin::DeepMerge.deep_merge(secrets['gitlab-patroni'], patroni_conf['gitlab-patroni']).to_hash
 patroni_conf = GitlabPatroni::AttributesHelper.populate_missing_values(patroni_conf)
 
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(patroni_conf)
@@ -19,7 +19,6 @@ log_directory               = patroni_conf['gitlab-patroni']['patroni']['log_dir
 log_path                    = "#{log_directory}/patroni.log"
 postgresql_config_directory = patroni_conf['gitlab-patroni']['postgresql']['config_directory']
 postgresql_user_home        = patroni_conf['gitlab-patroni']['postgresql']['pg_user_homedir'].nil? ? postgresql_config_directory : node['gitlab-patroni']['postgresql']['pg_user_homedir']
-postgresql_log_directory    = patroni_conf['gitlab-patroni']['postgresql']['log_directory']
 postgresql_log_directory    = patroni_conf['gitlab-patroni']['postgresql']['log_directory']
 postgresql_log_path         = "#{postgresql_log_directory}/postgresql.log"
 postgresql_csvlog_path      = "#{postgresql_log_directory}/postgresql.csv"
@@ -36,23 +35,23 @@ postgresql_superuser_password = patroni_conf['gitlab-patroni']['patroni']['users
 
 package 'build-essential'
 
-python_runtime node['gitlab-patroni']['patroni']['python_runtime_version'] do
-  pip_version node['gitlab-patroni']['patroni']['pip_version']
-  get_pip_url node['gitlab-patroni']['patroni']['get_pip_url']
-  options :system, package_name: node['gitlab-patroni']['patroni']['python_package_name']
+python_runtime patroni_conf['gitlab-patroni']['patroni']['python_runtime_version'] do
+  pip_version patroni_conf['gitlab-patroni']['patroni']['pip_version']
+  get_pip_url patroni_conf['gitlab-patroni']['patroni']['get_pip_url']
+  options :system, package_name: patroni_conf['gitlab-patroni']['patroni']['python_package_name']
 end
 
 python_virtualenv install_directory do
-  pip_version node['gitlab-patroni']['patroni']['pip_version']
-  get_pip_url node['gitlab-patroni']['patroni']['get_pip_url']
+  pip_version patroni_conf['gitlab-patroni']['patroni']['pip_version']
+  get_pip_url patroni_conf['gitlab-patroni']['patroni']['get_pip_url']
 end
 
 python_package 'psycopg2' do
-  version node['gitlab-patroni']['patroni']['psycopg2_version']
+  version patroni_conf['gitlab-patroni']['patroni']['psycopg2_version']
 end
 
 python_package 'pg_activity' do
-  version node['gitlab-patroni']['patroni']['pg_activity_version']
+  version patroni_conf['gitlab-patroni']['patroni']['pg_activity_version']
 end
 
 python_package 'patroni[consul]' do

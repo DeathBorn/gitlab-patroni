@@ -41,9 +41,6 @@ bootstrap:
       options: []
 tags: {}
 postgresql:
-  wal_e:
-    command: "/var/opt/gitlab/patroni/scripts/wale-restore.sh"
-    restore_cmd: "/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch"
   data_dir: "/var/opt/gitlab/postgresql/data"
   config_dir: "/var/opt/gitlab/postgresql"
   bin_dir: "/usr/lib/postgresql/12/bin"
