@@ -35,22 +35,22 @@ apt_update 'apt update'
 
 package 'build-essential'
 
-python_runtime node['gitlab-patroni']['patroni']['python_runtime_version'] do
-  pip_version node['gitlab-patroni']['patroni']['pip_version']
-  get_pip_url node['gitlab-patroni']['patroni']['get_pip_url']
+python_runtime patroni_conf['gitlab-patroni']['patroni']['python_runtime_version'] do
+  pip_version patroni_conf['gitlab-patroni']['patroni']['pip_version']
+  get_pip_url patroni_conf['gitlab-patroni']['patroni']['get_pip_url']
 end
 
 python_virtualenv install_directory do
-  pip_version node['gitlab-patroni']['patroni']['pip_version']
-  get_pip_url node['gitlab-patroni']['patroni']['get_pip_url']
+  pip_version patroni_conf['gitlab-patroni']['patroni']['pip_version']
+  get_pip_url patroni_conf['gitlab-patroni']['patroni']['get_pip_url']
 end
 
 python_package 'psycopg2' do
-  version node['gitlab-patroni']['patroni']['psycopg2_version']
+  version patroni_conf['gitlab-patroni']['patroni']['psycopg2_version']
 end
 
 python_package 'pg_activity' do
-  version node['gitlab-patroni']['patroni']['pg_activity_version']
+  version patroni_conf['gitlab-patroni']['patroni']['pg_activity_version']
 end
 
 python_package 'patroni[consul]' do

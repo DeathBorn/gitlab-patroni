@@ -33,7 +33,7 @@ template "#{scripts_directory}/post-failover-maintenance.sh" do
   variables(
     port: postgresql_helper.postgresql_port,
     host: 'localhost',
-    superuser: node['gitlab-patroni']['patroni']['users']['superuser']['username'],
+    superuser: patroni_conf['gitlab-patroni']['patroni']['users']['superuser']['username'],
     db_name: 'gitlabhq_production',
     jobs: 16
   )
