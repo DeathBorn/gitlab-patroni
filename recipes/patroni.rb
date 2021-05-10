@@ -192,6 +192,7 @@ template "#{node['gitlab-patroni']['postgresql']['config_directory']}/.pgpass" d
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
   mode '0600'
+  sensitive true
 end
 
 include_recipe 'logrotate::default'
