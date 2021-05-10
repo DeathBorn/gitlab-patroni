@@ -7,17 +7,22 @@
 postgresql_helper           = GitlabPatroni::PostgresqlHelper.new(node)
 postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
 
-directory postgresql_config_directory do
+# Needed to support Postgres 12 as deployed on May 8: we need to de-couple gitlab-psql's
+# home directory from the postgres config_directory; with conditional assigment, we will
+# support the old way in older environment, the new way in newer environments
+postgresql_user_home = node['gitlab-patroni']['postgresql']['pg_user_homedir'].nil? ? postgresql_config_directory : node['gitlab-patroni']['postgresql']['pg_user_homedir']
+
+directory postgresql_user_home do
   recursive true
 end
 
 user postgresql_helper.postgresql_user do
-  home postgresql_config_directory
+  home postgresql_user_home
   manage_home true
   not_if { node['etc']['passwd'].key?(postgresql_helper.postgresql_user) }
 end
 
-directory postgresql_config_directory do
+directory postgresql_user_home do
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
 end
