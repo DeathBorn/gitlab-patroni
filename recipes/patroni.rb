@@ -9,6 +9,8 @@ config_directory            = node['gitlab-patroni']['patroni']['config_director
 install_directory           = node['gitlab-patroni']['patroni']['install_directory']
 log_directory               = node['gitlab-patroni']['patroni']['log_directory']
 log_path                    = "#{log_directory}/patroni.log"
+postgresql_config_directory = node['gitlab-patroni']['postgresql']['config_directory']
+postgresql_user_home        = node['gitlab-patroni']['postgresql']['pg_user_homedir'].nil? ? postgresql_config_directory : node['gitlab-patroni']['postgresql']['pg_user_homedir']
 postgresql_log_directory    = node['gitlab-patroni']['postgresql']['log_directory']
 postgresql_log_path         = "#{postgresql_log_directory}/postgresql.log"
 postgresql_csvlog_path      = "#{postgresql_log_directory}/postgresql.csv"
@@ -180,7 +182,7 @@ template '/etc/rsyslog.d/52-wale.conf' do
   notifies :restart, 'service[rsyslog]', :delayed
 end
 
-template "#{node['gitlab-patroni']['postgresql']['config_directory']}/.pgpass" do
+template "#{postgresql_user_home}/.pgpass" do
   source 'pgpass.erb'
   variables(
     hostname: 'localhost',
