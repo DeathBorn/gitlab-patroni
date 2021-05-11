@@ -27,6 +27,12 @@ directory postgresql_user_home do
   group postgresql_helper.postgresql_group
 end
 
+directory postgresql_config_directory do
+  recursive true
+  owner postgresql_helper.postgresql_user
+  group postgresql_helper.postgresql_group
+end
+
 # Adapted from the postgresql cookbook
 package 'apt-transport-https'
 
