@@ -53,21 +53,23 @@ service 'postgresql' do
   action %i[stop disable]
 end
 
-cookbook_file "#{postgresql_config_directory}/postgresql.conf" do
-  source File.basename(name)
-  owner postgresql_helper.postgresql_user
-  group postgresql_helper.postgresql_group
-  # Patroni expects postgresql.conf to exist to move it to postgresql.base.conf,
-  # managing postgresql.conf by itself, so we don't want to override it.
-  action :create_if_missing
-end
+# We need to disable this on replicas, because Patroni will not start if the data directory is not empty.
+# cookbook_file "#{postgresql_config_directory}/postgresql.conf" do
+#   source File.basename(name)
+#   owner postgresql_helper.postgresql_user
+#   group postgresql_helper.postgresql_group
+#   # Patroni expects postgresql.conf to exist to move it to postgresql.base.conf,
+#   # managing postgresql.conf by itself, so we don't want to override it.
+#   action :create_if_missing
+# end
 
-cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
-  source 'postgresql.conf'
-  only_if { ::File.exist?(name) }
-end
+# We need to disable this on replicas, because Patroni will not start if the data directory is not empty.
+# cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
+#  source 'postgresql.conf'
+#  only_if { ::File.exist?(name) }
+# end
 
-file "#{postgresql_config_directory}/cacert.pem" do
+file "#{postgresql_user_home}/cacert.pem" do
   content node['gitlab-patroni']['postgresql']['ssl_ca']
   mode '0600'
   owner postgresql_helper.postgresql_user
@@ -75,7 +77,7 @@ file "#{postgresql_config_directory}/cacert.pem" do
   sensitive true
 end
 
-file "#{postgresql_config_directory}/server.crt" do
+file "#{postgresql_user_home}/server.crt" do
   content node['gitlab-patroni']['postgresql']['ssl_cert']
   mode '0600'
   owner postgresql_helper.postgresql_user
@@ -83,7 +85,7 @@ file "#{postgresql_config_directory}/server.crt" do
   sensitive true
 end
 
-file "#{postgresql_config_directory}/server.key" do
+file "#{postgresql_user_home}/server.key" do
   content node['gitlab-patroni']['postgresql']['ssl_key']
   mode '0600'
   owner postgresql_helper.postgresql_user
