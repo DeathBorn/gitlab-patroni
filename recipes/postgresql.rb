@@ -29,6 +29,7 @@ end
 
 directory postgresql_config_directory do
   recursive true
+  mode '0700'
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
 end
