@@ -54,17 +54,16 @@ service 'postgresql' do
   action %i[stop disable]
 end
 
-cookbook_file "#{postgresql_config_directory}/postgresql.conf" do
-  source File.basename(name)
-  owner postgresql_helper.postgresql_user
-  group postgresql_helper.postgresql_group
-  # Patroni expects postgresql.conf to exist to move it to postgresql.base.conf,
-  # managing postgresql.conf by itself, so we don't want to override it.
-  action :create_if_missing
-end
-
 cookbook_file "#{postgresql_config_directory}/postgresql.base.conf" do
   source 'postgresql.conf'
+  owner postgresql_helper.postgresql_user
+  group postgresql_helper.postgresql_group
+
+  # If this file already exists, manage it in Chef. If it doesn't, it means that:
+  # a. We're adding a new node, in which case we want patroni to create the configuration
+  # b. We're initializing a new cluster. Since this case is a rare occurrence, we leave
+  # creating this file as a manual action (a simple `touch` is enough for chef to take
+  # over).
   only_if { ::File.exist?(name) }
 end
 
