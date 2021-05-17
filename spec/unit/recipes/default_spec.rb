@@ -61,14 +61,6 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to install_package('postgresql-11-repack')
     end
 
-    it 'creates postgresql.conf if it is missing' do
-      conf_path    = '/var/opt/gitlab/postgresql/postgresql.conf'
-      conf_content = File.read('spec/fixtures/postgresql.conf')
-
-      expect(chef_run).to create_if_missing_cookbook_file(conf_path).with(owner: 'postgres', group: 'postgres')
-      expect(chef_run).to render_file(conf_path).with_content(conf_content)
-    end
-
     describe 'postgresql.base.conf' do
       let(:conf_path) { '/var/opt/gitlab/postgresql/postgresql.base.conf' }
 
@@ -79,7 +71,7 @@ describe 'gitlab-patroni::default' do
         end
 
         it 'updates the file' do
-          expect(chef_run).to create_cookbook_file(conf_path)
+          expect(chef_run).to create_cookbook_file(conf_path).with(owner: 'postgres', group: 'postgres')
         end
       end
 
