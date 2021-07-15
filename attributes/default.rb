@@ -30,6 +30,7 @@ default['gitlab-patroni']['postgresql']['parameters']['log_destination'] = 'sysl
 
 default['gitlab-patroni']['patroni']['version'] = '1.5.0'
 default['gitlab-patroni']['patroni']['python_runtime_version'] = '3'
+default['gitlab-patroni']['patroni']['python_package_name'] = 'python3'
 default['gitlab-patroni']['patroni']['pip_version'] = '18.0'
 default['gitlab-patroni']['patroni']['get_pip_url'] = 'https://bootstrap.pypa.io/pip/3.5/get-pip.py'
 default['gitlab-patroni']['patroni']['psycopg2_version'] = '2.8.5'

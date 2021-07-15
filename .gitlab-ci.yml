@@ -1,5 +1,14 @@
 image: ruby:2.6
 
+.kitchen-test-job: &kitchen-test-job
+  stage: test
+  needs: []
+  cache:
+    paths:
+      - "$BUNDLE_PATH"
+  script:
+    - make kitchen
+
 variables:
   DEBIAN_FRONTEND: noninteractive
   KITCHEN_YAML: ".kitchen.ci.yml"
@@ -37,12 +46,13 @@ rspec-test-job:
     - make rspec
 
 kitchen-test-job:
-  stage: test
-  cache:
-    paths:
-      - "$BUNDLE_PATH"
-  script:
-    - make kitchen
+  <<: *kitchen-test-job
+  parallel:
+    matrix:
+      - KITCHEN_PLATFORM:
+        - ubuntu-16-04-x64
+        - ubuntu-18-04-x64
+        - ubuntu-20-04-x64
 
 push-cookbook:
   stage: publish
