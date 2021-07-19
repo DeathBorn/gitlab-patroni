@@ -1,19 +1,17 @@
-image: ruby:2.6
-
-.kitchen-test-job: &kitchen-test-job
-  stage: test
-  needs: []
-  cache:
-    paths:
-      - "$BUNDLE_PATH"
-  script:
-    - make kitchen
+image: docker:19.03.15
 
 variables:
   DEBIAN_FRONTEND: noninteractive
-  KITCHEN_YAML: ".kitchen.ci.yml"
-  BUNDLE_PATH: "$CI_PROJECT_DIR/.bundle"
-  DIGITALOCEAN_TESTBOX_FQDN: gitlab-patroni.${CI_PROJECT_NAMESPACE}.ci.gitlab.test
+  BUNDLE_PATH: "./.bundle"
+#  DOCKER_DRIVER: overlay2
+  # Create the certificates inside this directory for both the server
+  # and client. The certificates used by the client will be created in
+  # /certs/client so we only need to share this directory with the
+  # volume mount in `config.toml`.
+  DOCKER_TLS_CERTDIR: "/certs"
+
+services:
+  - docker:19.03.15-dind
 
 stages:
   - test
@@ -21,10 +19,11 @@ stages:
 
 before_script:
   - eval $(ssh-agent -s)
-  - ssh-add <(echo $CI_PRIVATE_KEY |base64 -d)
+  - echo "${CI_PRIVATE_KEY}" | base64 -d | ssh-add -
   - mkdir -p ~/.ssh
   - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  - apt-get -qq update && apt-get -yqq install openssh-client rsync make jq
+  - apk update && apk add git openssh-client rsync make jq ruby-full ruby-dev build-base libressl-dev libsodium
+  - gem install bundle
   - make gems
 
 # Prefer GitLab CI parallelism to Make parallelism (split the lint step)
@@ -46,13 +45,12 @@ rspec-test-job:
     - make rspec
 
 kitchen-test-job:
-  <<: *kitchen-test-job
-  parallel:
-    matrix:
-      - KITCHEN_PLATFORM:
-        - ubuntu-16-04-x64
-        - ubuntu-18-04-x64
-        - ubuntu-20-04-x64
+  stage: test
+  cache:
+    paths:
+      - "$BUNDLE_PATH"
+  script:
+    - make kitchen
 
 push-cookbook:
   stage: publish

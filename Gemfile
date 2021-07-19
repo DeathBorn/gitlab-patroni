@@ -13,10 +13,9 @@ group :test do
   gem 'kitchen-vagrant'
   gem 'openssl'
   gem 'test-kitchen', '~> 1.23'
+  gem 'kitchen-dokken', '~> 2.14'
 end
 
 group :ed25519 do
   gem 'bcrypt_pbkdf', '~> 1.0'
-  gem 'rbnacl', '~> 4.0'
-  gem 'rbnacl-libsodium', '~> 1.0'
 end

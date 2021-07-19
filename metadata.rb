@@ -15,3 +15,6 @@ depends 'poise-service', '~> 1.5.2'
 depends 'logrotate', '~> 2.2.0'
 depends 'gitlab_secrets'
 depends 'consul', '>= 3.1'
+
+# Consul cookbook depends on golang and installs version 5.3.0 while the version isn't compatible with Chef < 15.3.
+depends 'golang', '= 4.1.1'
