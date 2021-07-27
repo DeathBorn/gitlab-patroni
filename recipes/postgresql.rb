@@ -34,6 +34,8 @@ directory postgresql_config_directory do
   group postgresql_helper.postgresql_group
 end
 
+apt_update 'apt update'
+
 # Adapted from the postgresql cookbook
 package 'apt-transport-https'
 
