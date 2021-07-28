@@ -11,8 +11,8 @@ group :test do
   gem 'kitchen-digitalocean', '~> 0.10'
   gem 'kitchen-inspec'
   gem 'kitchen-vagrant'
-  gem 'openssl'
   gem 'test-kitchen', '~> 1.23'
+  gem 'kitchen-dokken', '~> 2.14'
 end
 
 group :ed25519 do

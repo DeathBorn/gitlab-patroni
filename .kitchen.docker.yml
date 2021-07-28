@@ -1,0 +1,92 @@
+---
+driver:
+  name: dokken
+  chef_version: 14.12.3 # Unable to use a newer Chef version due to outdated cookbooks
+  privileged: true
+
+provisioner:
+  name: dokken
+  data_bags_path: "./test/fixtures/data_bags"
+
+transport:
+  name: dokken
+
+platforms:
+- name: ubuntu-16.04
+  driver:
+    image: dokken/ubuntu-16.04
+    pid_one_command: /sbin/init
+    intermediate_instructions:
+      - RUN apt-get -y install rsyslog
+
+- name: ubuntu-18.04
+  driver:
+    image: dokken/ubuntu-18.04
+    pid_one_command: /sbin/init
+    intermediate_instructions:
+      - RUN apt-get -y install rsyslog
+
+- name: ubuntu-20.04
+  driver:
+    image: dokken/ubuntu-20.04
+    pid_one_command: /lib/systemd/systemd
+    intermediate_instructions:
+      - RUN apt-get -y install rsyslog
+
+verifier:
+  name: inspec
+
+suites:
+  - name: patroni
+    run_list:
+      - recipe[gitlab_consul::cluster]
+      - recipe[gitlab-patroni::default]
+      - recipe[gitlab-patroni::consul]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    attributes:
+      gitlab-patroni:
+        secrets:
+          backend: chef_vault
+          path: secrets
+          key: gitlab-patroni
+        patroni:
+          config:
+            bootstrap:
+              pg_hba:
+                - host postgres gitlab-superuser 192.168.0.0/11 md5
+                - host all gitlab-superuser 192.168.0.0/11 md5
+                - host all gitlab-superuser 192.168.0.0/11 md5
+                - host all gitlab-superuser 127.0.0.1/32 md5
+                - host replication gitlab-replicator 127.0.0.1/32 md5
+                - host replication gitlab-replicator 192.168.0.0/11 md5
+        postgresql:
+          parameters:
+            shared_buffers: 512MB
+      consul:
+        config:
+          bootstrap_expect: 3
+          datacenter: local
+          ui: true
+          enable_syslog: true
+          log_level: INFO
+      gitlab_consul:
+        cluster:
+          bind_interface:
+          tls:
+            ssl_key:
+              secret_source: chef_vault
+              secret_bag: secrets
+              item: gitlab-consul-cluster
+            ssl_cert:
+              secret_source: chef_vault
+              secret_bag: secrets
+              item: gitlab-consul-cluster
+            ssl_chain:
+              secret_source: chef_vault
+              secret_bag: secrets
+              item: gitlab-consul-cluster
+      prometheus:
+        labels:
+          env: test
