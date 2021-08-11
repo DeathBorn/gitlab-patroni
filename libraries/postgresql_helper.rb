@@ -6,6 +6,10 @@ module GitlabPatroni
       @node = node
     end
 
+    def postgresql_db_name
+      node['gitlab-patroni']['db_name']
+    end
+
     def postgresql_user
       node['gitlab-patroni']['user']
     end
