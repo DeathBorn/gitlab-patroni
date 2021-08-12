@@ -87,6 +87,9 @@ verifier:
 
 suites:
   - name: patroni
+    lifecycle:
+      pre_converge:
+        remote: "apt-get update"
     driver:
       network:
         - ["private_network", {ip: "192.168.33.2"}]

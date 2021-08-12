@@ -69,7 +69,7 @@ template '/usr/local/bin/gitlab-psql' do
     port: postgresql_helper.postgresql_port,
     host: 'localhost',
     superuser: postgresql_superuser,
-    db_name: 'gitlabhq_production'
+    db_name: postgresql_helper.postgresql_db_name
   )
   mode '0777'
 end

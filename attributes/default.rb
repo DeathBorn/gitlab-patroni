@@ -1,5 +1,6 @@
 default['gitlab-patroni']['user'] = 'postgres'
 default['gitlab-patroni']['group'] = 'postgres'
+default['gitlab-patroni']['db_name'] = 'gitlabhq_production'
 
 default['gitlab-patroni']['secrets']['backend'] = 'dummy'
 default['gitlab-patroni']['secrets']['path']['path'] = 'gitlab-gstg-secrets/gitlab-patroni'
