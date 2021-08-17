@@ -48,6 +48,13 @@ apt_repository 'postgresql' do
 end
 
 package "postgresql-#{postgresql_helper.version}"
+
+if node['lsb']['codename'] == 'xenial'
+  package "postgresql-#{postgresql_helper.version}-dbg"
+else
+  package "postgresql-#{postgresql_helper.version}-dbgsym"
+end
+
 package "postgresql-#{postgresql_helper.version}-repack"
 # Needed by psycopg2 >= 2.8 which is a dependency of Patroni
 package "postgresql-server-dev-#{postgresql_helper.version}"
