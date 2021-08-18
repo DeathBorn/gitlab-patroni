@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 group :test do
@@ -8,8 +10,10 @@ group :test do
   gem 'chefspec', '~> 7.2'
   gem 'cookstyle'
   gem 'fauxhai'
-  gem 'kitchen-digitalocean', '~> 0.10'
+  gem 'kitchen-google', '~> 1.0'
   gem 'kitchen-inspec'
+  gem 'kitchen-sync'
+  gem 'kitchen-transport-rsync'
   gem 'kitchen-vagrant'
   gem 'test-kitchen', '~> 1.23'
   gem 'kitchen-dokken', '~> 2.14'

@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 name             'gitlab-patroni'
 maintainer       'GitLab Inc.'
 maintainer_email 'ops-contact+cookbooks@gitlab.com'
 license          'MIT'
 description      'Installs and configures Patroni for GitLab'
-version          '1.4.19'
+version          '1.4.20'
 chef_version     '>= 12.1'
 issues_url       'https://gitlab.com/gitlab-cookbooks/gitlab-patroni/issues'
 source_url       'https://gitlab.com/gitlab-cookbooks/gitlab-patroni'
