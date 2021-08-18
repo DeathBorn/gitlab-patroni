@@ -35,6 +35,7 @@ verifier:
     postgresql:
       parameters:
         shared_buffers: 512MB
+        shared_preload_libraries: pg-wait-sampling
   consul:
     config:
       bootstrap_expect: 3
@@ -66,7 +67,6 @@ verifier:
     labels:
       env: test
 
-# Remember to duplicate any changes here to the DO and CI (also DO) configs.
 suites:
   - name: patroni-1
     driver:
@@ -109,3 +109,12 @@ suites:
     verifier:
       inspec_tests:
         - test/integration/default
+
+  - name: postgresql_extension_pg_wait_sampling
+    run_list:
+      - recipe[gitlab-patroni::default]
+    attributes:
+      <<: *common_attributes
+    verifier:
+      inspec_tests:
+        - test/integration/postgresql/extensions/pg_wait_sampling

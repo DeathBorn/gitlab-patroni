@@ -19,3 +19,6 @@ Berksfile.lock
 Gemfile.lock
 .bundle/*
 /vendor
+
+# IDEs
+**/.idea
