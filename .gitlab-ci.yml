@@ -11,7 +11,7 @@ image: ruby:2.6
 
 variables:
   DEBIAN_FRONTEND: noninteractive
-  KITCHEN_YAML: ".kitchen.ci.yml"
+  KITCHEN_YAML: "kitchen.ci.yml"
   BUNDLE_PATH: "$CI_PROJECT_DIR/.bundle"
   DIGITALOCEAN_TESTBOX_FQDN: gitlab-patroni.${CI_PROJECT_NAMESPACE}.ci.gitlab.test
 
