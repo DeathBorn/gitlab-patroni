@@ -1,0 +1,11 @@
+name: pg_wait_sampling
+title: pg_wait_sampling extension configuration
+maintainer: GitLab Inc.
+copyright: GitLab Inc.
+copyright_email: ops-contact+cookbooks@gitlab.com
+license: MIT
+summary: Verify that PostgreSQL extension pg_wait_sampling is installed and configured
+version: 1.0.0
+supports:
+  - platform-name: ubuntu
+inspec_version: '>= 4.38'

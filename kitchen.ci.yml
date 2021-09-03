@@ -63,13 +63,13 @@ verifier:
           pg_hba:
             - host postgres gitlab-superuser 192.168.0.0/11 md5
             - host all gitlab-superuser 192.168.0.0/11 md5
-            - host all gitlab-superuser 192.168.0.0/11 md5
             - host all gitlab-superuser 127.0.0.1/32 md5
             - host replication gitlab-replicator 127.0.0.1/32 md5
             - host replication gitlab-replicator 192.168.0.0/11 md5
     postgresql:
       parameters:
         shared_buffers: 512MB
+        shared_preload_libraries: pg-wait-sampling
   consul:
     config:
       bootstrap_expect: 3
@@ -105,7 +105,7 @@ suites:
   - name: patroni
     lifecycle:
       pre_converge:
-        remote: "sudo apt-get update"
+        remote: "sudo apt-get clean && sudo apt-get update"
     run_list:
       - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
@@ -115,3 +115,12 @@ suites:
     verifier:
       inspec_tests:
         - test/integration/default
+
+  - name: postgresql_extension_pg_wait_sampling
+    run_list:
+      - recipe[gitlab-patroni::default]
+    attributes:
+      <<: *common_attributes
+    verifier:
+      inspec_tests:
+        - test/integration/postgresql/extensions/pg_wait_sampling
