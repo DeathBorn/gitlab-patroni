@@ -55,7 +55,7 @@ verifier:
     postgresql:
       parameters:
         shared_buffers: 512MB
-        shared_preload_libraries: pg-wait-sampling
+        shared_preload_libraries: pg_wait_sampling
   consul:
     config:
       bootstrap_expect: 3
