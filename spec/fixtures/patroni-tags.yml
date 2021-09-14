@@ -45,7 +45,7 @@ tags:
 postgresql:
   data_dir: "/var/opt/gitlab/postgresql/data"
   config_dir: "/var/opt/gitlab/postgresql"
-  bin_dir: "/usr/lib/postgresql/11/bin"
+  bin_dir: "/usr/lib/postgresql/12/bin"
   listen: 0.0.0.0:5432
   parameters:
     port: 5432
