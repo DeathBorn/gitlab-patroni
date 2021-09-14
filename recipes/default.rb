@@ -20,3 +20,7 @@ postgresql_shared_preload_libraries = node['gitlab-patroni']['postgresql']['para
 if !postgresql_shared_preload_libraries.nil? && postgresql_shared_preload_libraries.include?('pg_wait_sampling')
   include_recipe '::pg_wait_sampling'
 end
+
+if !postgresql_shared_preload_libraries.nil? && postgresql_shared_preload_libraries.include?('pg_stat_kcache')
+  include_recipe '::pg_stat_kcache'
+end

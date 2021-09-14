@@ -55,7 +55,7 @@ verifier:
     postgresql:
       parameters:
         shared_buffers: 512MB
-        shared_preload_libraries: pg_wait_sampling
+        shared_preload_libraries: pg_wait_sampling,pg_stat_kcache
   consul:
     config:
       bootstrap_expect: 3
@@ -107,3 +107,12 @@ suites:
     verifier:
       inspec_tests:
         - test/integration/postgresql/extensions/pg_wait_sampling
+
+  - name: postgresql_extension_pg_stat_kcache
+    run_list:
+      - recipe[gitlab-patroni::default]
+    attributes:
+      <<: *common_attributes
+    verifier:
+      inspec_tests:
+        - test/integration/postgresql/extensions/pg_stat_kcache

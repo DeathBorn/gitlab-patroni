@@ -74,7 +74,7 @@ control 'Patroni' do
     its('content') { should match(/tags: {}/) }
     its('content') { should match(%r{data_dir: "/var/opt/gitlab/postgresql/data"}) }
     its('content') { should match(%r{config_dir: "/var/opt/gitlab/postgresql"}) }
-    its('content') { should match(%r{bin_dir: "/usr/lib/postgresql/11/bin"}) }
+    its('content') { should match(%r{bin_dir: "/usr/lib/postgresql/12/bin"}) }
     its('content') { should match(/listen: 0.0.0.0:5432/) }
     its('content') { should match(/port: 5432/) }
     its('content') { should match(/ssl: 'off'/) }
