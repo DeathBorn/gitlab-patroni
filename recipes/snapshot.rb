@@ -26,7 +26,7 @@ end
 cron 'GCS snapshot' do
   minute node['gitlab-patroni']['snapshot']['cron']['minute']
   hour node['gitlab-patroni']['snapshot']['cron']['hour']
-  user postgresql_helper.postgresql_user
+  user node['gitlab-patroni']['snapshot']['cron']['user']
   command snapshot_script_path
   path '/usr/local/sbin:/usr/sbin/:/sbin:/usr/local/bin:/usr/bin:/bin'
   action :create
