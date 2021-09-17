@@ -78,6 +78,7 @@ default['gitlab-patroni']['patroni']['config']['tags'] = {}
 default['gitlab-patroni']['snapshot']['gcs_credentials'] = 'in vault'
 default['gitlab-patroni']['snapshot']['cron']['minute'] = 0
 default['gitlab-patroni']['snapshot']['cron']['hour'] = '*/6'
+default['gitlab-patroni']['snapshot']['cron']['user'] = node['gitlab-patroni']['user']
 default['gitlab-patroni']['snapshot']['gcs_credentials_path'] = '/etc/gitlab/gcs-snapshot.json'
 default['gitlab-patroni']['snapshot']['snapshot_script_path'] = '/usr/local/bin/gcs-snapshot.sh'
 default['gitlab-patroni']['snapshot']['log_path_prefix'] = '/var/log/gitlab/postgresql/gcs-snapshot'
