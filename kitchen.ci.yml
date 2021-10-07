@@ -107,6 +107,7 @@ suites:
       pre_converge:
         remote: "sudo apt-get clean && sudo apt-get update"
     run_list:
+      - recipe[gitlab-patroni::kitchen_chef_sslerror_fix]
       - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
       - recipe[gitlab-patroni::consul]
@@ -118,6 +119,7 @@ suites:
 
   - name: postgresql_extension_pg_wait_sampling
     run_list:
+      - recipe[gitlab-patroni::kitchen_chef_sslerror_fix]
       - recipe[gitlab-patroni::default]
     attributes:
       <<: *common_attributes
