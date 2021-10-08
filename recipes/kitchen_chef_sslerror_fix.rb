@@ -25,5 +25,5 @@
 
 execute 'Download new certificate file from curl.se for Chef' do
   command 'rm -rf /opt/chef/embedded/ssl/cert.pem && curl https://curl.se/ca/cacert.pem -o /opt/chef/embedded/ssl/cert.pem'
-  only_if { node['platform_version'].to_i == 16 }
+  only_if { ENV['TEST_KITCHEN'] == '1' }
 end
