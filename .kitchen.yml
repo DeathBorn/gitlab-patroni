@@ -110,7 +110,7 @@ suites:
       inspec_tests:
         - test/integration/default
 
-  - name: postgresql_extension_pg_wait_sampling
+  - name: psql_ext_pg_wait_sampling
     run_list:
       - recipe[gitlab-patroni::default]
     attributes:
@@ -119,7 +119,7 @@ suites:
       inspec_tests:
         - test/integration/postgresql/extensions/pg_wait_sampling
 
-  - name: postgresql_extension_pg_stat_kcache
+  - name: psql_ext_pg_stat_kcache
     run_list:
       - recipe[gitlab-patroni::default]
     attributes:
