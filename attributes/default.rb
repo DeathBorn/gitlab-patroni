@@ -11,6 +11,7 @@ default['gitlab-patroni']['secrets']['key']['location'] = 'global'
 
 default['gitlab-patroni']['postgresql']['version'] = '12'
 default['gitlab-patroni']['postgresql']['use_gitlab_aptly'] = false
+default['gitlab-patroni']['postgresql']['install_debug_package'] = true
 default['gitlab-patroni']['postgresql']['config_directory'] = '/var/opt/gitlab/postgresql'
 default['gitlab-patroni']['postgresql']['data_directory'] = '/var/opt/gitlab/postgresql/data'
 default['gitlab-patroni']['postgresql']['log_directory'] = '/var/log/gitlab/postgresql'
