@@ -117,7 +117,7 @@ suites:
       inspec_tests:
         - test/integration/default
 
-  - name: postgresql_extension_pg_wait_sampling
+  - name: pg_extension_pg_wait_sampling
     run_list:
       - recipe[gitlab-patroni::kitchen_chef_sslerror_fix]
       - recipe[gitlab-patroni::default]
@@ -127,7 +127,7 @@ suites:
       inspec_tests:
         - test/integration/postgresql/extensions/pg_wait_sampling
 
-  - name: postgresql_extension_pg_stat_kcache
+  - name: pg_extension_pg_stat_kcache
     run_list:
       - recipe[gitlab-patroni::kitchen_chef_sslerror_fix]
       - recipe[gitlab-patroni::default]
