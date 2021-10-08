@@ -116,7 +116,7 @@ suites:
       inspec_tests:
         - test/integration/default
 
-  - name: postgresql_extension_pg_wait_sampling
+  - name: pg_extension_pg_wait_sampling
     run_list:
       - recipe[gitlab-patroni::default]
     attributes:
