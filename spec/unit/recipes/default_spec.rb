@@ -53,8 +53,51 @@ describe 'gitlab-patroni::default' do
       )
     end
 
+    it 'adds GitLab Aptly repository' do
+      expect(chef_run).to add_apt_repository('gitlab-aptly').with(
+        uri: 'http://aptly.gitlab.com/gitlab-utils',
+        components: %w(main),
+        distribution: 'xenial',
+        key: ['http://aptly.gitlab.com/release.asc'],
+        cache_rebuild: true
+      )
+    end
+
     it 'installs postgresql' do
       expect(chef_run).to install_package('postgresql-12')
+    end
+
+    describe 'use_gitlab_aptly' do
+      let(:chef_run) do
+        ChefSpec::ServerRunner.new do |node|
+          node.normal['etc']['passwd'] = {}
+          node.normal['gitlab-patroni']['postgresql']['use_gitlab_aptly'] = use_gitlab_aptly
+        end.converge(described_recipe)
+      end
+
+      context 'when set to true' do
+        let(:use_gitlab_aptly) { true }
+
+        it 'creates an apt_preference with a high priority' do
+          expect(chef_run).to add_apt_preference('postgresql').with(
+            glob: 'postgresql-*',
+            pin: 'origin aptly.gitlab.com',
+            pin_priority: '1001'
+          )
+        end
+      end
+
+      context 'when set to false' do
+        let(:use_gitlab_aptly) { false }
+
+        it 'creates an apt_preference with a low priority' do
+          expect(chef_run).to add_apt_preference('postgresql').with(
+            glob: 'postgresql-*',
+            pin: 'origin aptly.gitlab.com',
+            pin_priority: '400'
+          )
+        end
+      end
     end
 
     it 'installs pg_repack extension' do

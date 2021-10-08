@@ -47,6 +47,23 @@ apt_repository 'postgresql' do
   cache_rebuild true
 end
 
+# Used to install custom-built packages or packages that's not published in the default APT repositories
+apt_repository 'gitlab-aptly' do
+  uri          'http://aptly.gitlab.com/gitlab-utils'
+  arch         'amd64'
+  distribution 'xenial'
+  components   ['main']
+  key          'http://aptly.gitlab.com/release.asc'
+  cache_rebuild true
+end
+
+use_gitlab_aptly = node['gitlab-patroni']['postgresql']['use_gitlab_aptly']
+apt_preference 'postgresql' do
+  glob 'postgresql-*'
+  pin 'origin aptly.gitlab.com'
+  pin_priority use_gitlab_aptly ? '1001' : '400'
+end
+
 package "postgresql-#{postgresql_helper.version}"
 
 if node['lsb']['codename'] == 'xenial'

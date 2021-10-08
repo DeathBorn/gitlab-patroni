@@ -6,14 +6,7 @@
 #
 # Install the pgsentinel package from aptly.gitlab.com.
 
-apt_repository 'gitlab-aptly' do
-  uri          'http://aptly.gitlab.com/gitlab-utils'
-  arch         'amd64'
-  distribution 'xenial'
-  components   ['main']
-  key          'http://aptly.gitlab.com/release.asc'
-end
-
+# GitLab Aptly repository is provisioned in postgresql recipe.
 apt_package 'gitlab-pgsentinel' do
   action :install
 end
