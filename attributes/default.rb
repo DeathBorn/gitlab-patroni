@@ -91,6 +91,6 @@ default['gitlab-patroni']['analyze']['analyze_script_path'] = '/usr/local/bin/an
 default['gitlab-patroni']['analyze']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-namespaces-table'
 
 default['gitlab-patroni']['issues_notes']['cron']['minute'] = 0
-default['gitlab-patroni']['issues_notes']['cron']['hour'] = '*/2'
+default['gitlab-patroni']['issues_notes']['cron']['hour'] = '*/1'
 default['gitlab-patroni']['issues_notes']['analyze_script_path'] = '/usr/local/bin/analyze-issues_notes-table.sh'
 default['gitlab-patroni']['issues_notes']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-issues_notes-table'
