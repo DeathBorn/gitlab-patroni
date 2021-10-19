@@ -47,7 +47,7 @@ describe 'gitlab-patroni::snapshot' do
     expect(chef_run).to create_cron('GCS snapshot').with(
       user: 'postgres',
       command: '/usr/local/bin/gcs-snapshot.sh',
-      path: '/usr/local/sbin:/usr/sbin/:/sbin:/usr/local/bin:/usr/bin:/bin'
+      path: '/usr/local/sbin:/usr/sbin/:/sbin:/usr/local/bin:/usr/bin:/bin:/snap/bin'
     )
   end
 
