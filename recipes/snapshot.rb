@@ -3,6 +3,16 @@ gcs_credentials_path = node['gitlab-patroni']['snapshot']['gcs_credentials_path'
 snapshot_script_path = node['gitlab-patroni']['snapshot']['snapshot_script_path']
 log_path_prefix      = node['gitlab-patroni']['snapshot']['log_path_prefix']
 
+apt_repository 'google-cloud-sdk' do
+  uri          'https://packages.cloud.google.com/apt'
+  components   %w(cloud-sdk main)
+  distribution ''
+  key 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+  cache_rebuild true
+end
+
+package 'google-cloud-sdk'
+
 directory File.dirname(gcs_credentials_path) do
   recursive true
 end
