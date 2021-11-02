@@ -137,6 +137,6 @@ suites:
       - recipe[gitlab-patroni::pgwatch2_postgresql_user]
     attributes:
       <<: *common_attributes
-#    verifier:
-#      inspec_tests:
-#        - test/integration/postgresql/monitoring/pgwatch2
+    verifier:
+      inspec_tests:
+        - test/integration/postgresql/monitoring/pgwatch2

@@ -26,10 +26,6 @@ dpkg_package 'pgwatch2' do
   source "#{Chef::Config[:file_cache_path]}/pgwatch2.deb"
 end
 
-execute 'Copy /etc/pgwatch2/startup-scripts/pgwatch2.service to /etc/systemd/system/pgwatch2.service' do
-  command 'cp /etc/pgwatch2/startup-scripts/pgwatch2.service /etc/systemd/system/pgwatch2.service'
-end
-
 template '/etc/pgwatch2/config/instances.yaml' do
   source 'postgresql/monitoring/pgwatch2/instances.yml.erb'
   variables({
