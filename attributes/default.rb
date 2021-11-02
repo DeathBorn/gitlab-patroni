@@ -30,6 +30,11 @@ default['gitlab-patroni']['postgresql']['parameters']['port'] = 5432
 default['gitlab-patroni']['postgresql']['parameters']['ssl'] = 'off'
 default['gitlab-patroni']['postgresql']['parameters']['ssl_ciphers'] = 'HIGH:MEDIUM:+3DES:!aNULL:!SSLv3:!TLSv1'
 default['gitlab-patroni']['postgresql']['parameters']['log_destination'] = 'syslog'
+default['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['download_url'] = 'https://github.com/cybertec-postgresql/pgwatch2/releases/download/v1.8.4/pgwatch2_v1.8.4-SNAPSHOT-04f06dd_linux_64-bit.deb'
+default['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['database_name'] = node['gitlab-patroni']['db_name']
+default['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['database_host'] = '127.0.0.1'
+default['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['enable'] = false
+default['gitlab-patroni']['postgresql']['monitoring']['influxdb']['download_url'] = 'https://dl.influxdata.com/influxdb/releases/influxdb_1.8.10_amd64.deb'
 
 default['gitlab-patroni']['patroni']['version'] = '1.5.0'
 default['gitlab-patroni']['patroni']['python_runtime_version'] = '3'

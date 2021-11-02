@@ -1,0 +1,13 @@
+[Unit]
+Description=pgwatch2 gathering daemon
+After=network-online.target
+
+[Service]
+User=pgwatch2
+Type=notify
+ExecStart=/usr/bin/pgwatch2-daemon -c /etc/pgwatch2/config/instances.yaml -m /etc/pgwatch2/metrics --datastore=influx --ihost=127.0.0.1 --iport=8086 --idbname=pgwatch2 --iuser=pgwatch2 --ipassword=<%= @influxdb_password %> --iretentiondays=30 --iretentionname=pgwatch2_def_ret --verbose=WARN
+Restart=on-failure
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

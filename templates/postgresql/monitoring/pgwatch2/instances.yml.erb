@@ -1,0 +1,17 @@
+- unique_name: <%= @database_name %>
+  dbtype: postgres
+  dbname: <%= @database_name %>
+  host: <%= @database_host %>
+  port: <%= @database_port %>
+  username: <%= @database_user %>
+  password: <%= @database_password %>
+  sslmode: disable
+  stmt_timeout: 10 # in seconds
+  preset_metrics: exhaustive # https://github.com/cybertec-postgresql/pgwatch2/blob/master/pgwatch2/metrics/preset-configs.yaml
+  preset_metrics_standby: # https://github.com/cybertec-postgresql/pgwatch2/blob/master/pgwatch2/metrics/preset-configs.yaml
+  dbname_include_pattern: <%= @database_name %> # regex to filter databases to actually monitor for the "continuous" modes
+  is_enabled: true
+  group: <%= @database_name %>
+  sslrootcert: ''
+  sslcert: ''
+  sslkey: ''
