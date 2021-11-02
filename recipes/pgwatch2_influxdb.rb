@@ -34,8 +34,8 @@ execute 'Create InfluxDB database user for pgwatch2' do
 end
 
 bash 'Grant permissions to InfluxDB database user for pgwatch2' do
-    code <<-EOH
-      influx -execute "GRANT READ ON pgwatch2 TO pgwatch2"
-      influx -execute "GRANT WRITE ON pgwatch2 TO pgwatch2"
-    EOH
+  code <<-EOH
+    influx -execute "GRANT READ ON pgwatch2 TO pgwatch2"
+    influx -execute "GRANT WRITE ON pgwatch2 TO pgwatch2"
+  EOH
 end
