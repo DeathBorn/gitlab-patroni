@@ -13,15 +13,15 @@ if node['platform_version'].to_i < 18
   return
 end
 
-if node['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['enable'] and `systemctl status patroni | grep RUNNING`
+if node['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['enable']
   default_role = node['gitlab-patroni']['user']
   password = node['gitlab-patroni']['patroni']['users']['superuser']['password']
   db_name = node['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['database_name']
 
   execute 'Create PostgreSQL database user for pgwatch2' do
-    command %Q(gitlab-psql -d #{default_role} -c "CREATE ROLE pgwatch2 WITH LOGIN PASSWORD '#{password}';")
+    command %(gitlab-psql -d #{default_role} -c "CREATE ROLE pgwatch2 WITH LOGIN PASSWORD '#{password}';")
     sensitive true
-    not_if %Q(gitlab-psql -d #{default_role} -c "SELECT 1 FROM pg_roles WHERE rolname='pgwatch2';" | grep -q 1)
+    not_if %(gitlab-psql -d #{default_role} -c "SELECT 1 FROM pg_roles WHERE rolname='pgwatch2';" | grep -q 1)
   end
 
   bash 'Grant PostgreSQL permissions to pgwatch2 user' do
@@ -35,7 +35,7 @@ if node['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['enable'] and 
   end
 
   execute 'Grant PostgreSQL pg_wait_sampling_reset_profile() permission to pgwatch2 user' do
-    command %Q(gitlab-psql -d #{default_role} -c "GRANT EXECUTE ON FUNCTION pg_wait_sampling_reset_profile() TO pgwatch2;")
-    only_if %Q(gitlab-psql -d #{default_role} -c  '\\df' | grep 'pg_wait_sampling_reset_profile()')
+    command %(gitlab-psql -d #{default_role} -c "GRANT EXECUTE ON FUNCTION pg_wait_sampling_reset_profile() TO pgwatch2;")
+    only_if %(gitlab-psql -d #{default_role} -c  '\\df' | grep 'pg_wait_sampling_reset_profile()')
   end
 end

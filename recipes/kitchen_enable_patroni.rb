@@ -47,7 +47,7 @@ end
 default_role = node['gitlab-patroni']['user']
 db_name = node['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['database_name']
 execute "Create database #{db_name}" do
-  command %Q(echo "SELECT 'CREATE DATABASE #{db_name}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '#{db_name}')\\gexec" | gitlab-psql -d #{default_role})
+  command %(echo "SELECT 'CREATE DATABASE #{db_name}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '#{db_name}')\\gexec" | gitlab-psql -d #{default_role})
   retries 5
   retry_delay 5
 end
