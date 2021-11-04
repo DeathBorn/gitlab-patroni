@@ -35,7 +35,10 @@ verifier:
     postgresql:
       parameters:
         shared_buffers: 512MB
-        shared_preload_libraries: pg_wait_sampling,pg_stat_kcache
+        shared_preload_libraries: pg_stat_statements,pg_wait_sampling,pg_stat_kcache
+      monitoring:
+        pgwatch2:
+          enable: true
   consul:
     config:
       bootstrap_expect: 3
@@ -130,9 +133,15 @@ suites:
 
   - name: postgresql_pgwatch2
     run_list:
+      - recipe[gitlab-patroni::kitchen_chef_sslerror_fix]
+      - recipe[gitlab_consul::cluster]
       - recipe[gitlab-patroni::default]
+      - recipe[gitlab-patroni::consul]
+      - recipe[gitlab-patroni::kitchen_enable_patroni]
+      - recipe[gitlab-patroni::pgwatch2]
+      - recipe[gitlab-patroni::pgwatch2_postgresql_user]
     attributes:
       <<: *common_attributes
-#    verifier:
-#      inspec_tests:
-#        - test/integration/postgresql/extensions/pg_wait_sampling
+    verifier:
+      inspec_tests:
+        - test/integration/postgresql/monitoring/pgwatch2
