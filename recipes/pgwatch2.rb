@@ -16,8 +16,6 @@ end
 
 package 'git'
 
-include_recipe '::pgwatch2_influxdb'
-
 remote_file "#{Chef::Config[:file_cache_path]}/pgwatch2.deb" do
   source node['gitlab-patroni']['postgresql']['monitoring']['pgwatch2']['download_url']
 end
@@ -47,16 +45,15 @@ template '/etc/systemd/system/pgwatch2.service' do
   notifies :restart, 'service[pgwatch2]', :delayed
 end
 
-git 'Checkout pgwatch2 Postgres.ai Edition metrics' do
-  repository 'https://gitlab.com/postgres-ai/pgwatch2.git'
-  checkout_branch 'Postgres.ai_v1.8.5'
-  destination "#{Chef::Config[:file_cache_path]}/postgres_ai"
+# Using command line because Chef's "git" resource refused to checkout the right branch despite the used attributes
+execute 'Checkout pgwatch2 Postgres.ai Edition metrics' do
+  command "git clone --depth 1  --branch Postgres.ai_v1.8.5 https://gitlab.com/postgres-ai/pgwatch2.git #{Chef::Config[:file_cache_path]}/postgres_ai"
 end
 
 directory '/etc/pgwatch2/metrics' do
   recursive true
   action :delete
-  only_if 'ls /etc/pgwatch2/metrics'
+  only_if 'test -d /etc/pgwatch2/metrics'
 end
 
 execute 'Copy Postgres.ai metrics to pgwatch2' do
