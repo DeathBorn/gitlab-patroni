@@ -1,5 +1,5 @@
 if os.release.to_i < 18
-  log %q(This test doesn't support Ubuntu versions older than 18.04.)
+  puts %q(This test doesn't support Ubuntu versions older than 18.04.)
   return
 end
 
