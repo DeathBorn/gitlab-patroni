@@ -36,9 +36,17 @@ control 'Pgwatch2 configuration' do
     its('content') { should match(/--prometheus-namespace=pgwatch2/) }
   end
 
-  describe command('netstat -tulpn | grep LISTEN') do
-    its('exit_status') { should eq 0 }
-    its('stdout') { should match(%r{9187.+LISTEN\s+\d+/pgwatch2}) }
+  # In Ubuntu 20.04, `netstat` was replaced by `ss`
+  if os.release.to_i == 20
+    describe command('ss -ltpn | grep LISTEN') do
+      its('exit_status') { should eq 0 }
+      its('stdout') { should match(/^LISTEN.+\*:9187.+pgwatch2-/) }
+    end
+  else
+    describe command('netstat -tulpn | grep LISTEN') do
+      its('exit_status') { should eq 0 }
+      its('stdout') { should match(%r{9187.+LISTEN\s+\d+/pgwatch2-}) }
+    end
   end
 
   describe command('curl -v 127.0.0.1:9187') do
