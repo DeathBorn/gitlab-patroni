@@ -94,3 +94,9 @@ default['gitlab-patroni']['issues_notes']['cron']['minute'] = 0
 default['gitlab-patroni']['issues_notes']['cron']['hour'] = '*/1'
 default['gitlab-patroni']['issues_notes']['analyze_script_path'] = '/usr/local/bin/analyze-issues_notes-table.sh'
 default['gitlab-patroni']['issues_notes']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-issues_notes-table'
+
+default['gitlab-patroni']['reset_sampling']['cron']['minute'] = 0
+default['gitlab-patroni']['reset_sampling']['cron']['hour'] = '3'
+default['gitlab-patroni']['reset_sampling']['cron']['day'] = '7'
+default['gitlab-patroni']['reset_sampling']['analyze_script_path'] = '/usr/local/bin/reset_sampling.sh'
+default['gitlab-patroni']['reset_sampling']['log_path_prefix'] = '/var/log/gitlab/postgresql/reset_sampling'
