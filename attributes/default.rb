@@ -98,5 +98,5 @@ default['gitlab-patroni']['issues_notes']['log_path_prefix'] = '/var/log/gitlab/
 default['gitlab-patroni']['reset_sampling']['cron']['minute'] = 0
 default['gitlab-patroni']['reset_sampling']['cron']['hour'] = '3'
 default['gitlab-patroni']['reset_sampling']['cron']['day'] = '7'
-default['gitlab-patroni']['reset_sampling']['analyze_script_path'] = '/usr/local/bin/reset_sampling.sh'
+default['gitlab-patroni']['reset_sampling']['reset_sampling_script_path'] = '/usr/local/bin/reset_sampling.sh'
 default['gitlab-patroni']['reset_sampling']['log_path_prefix'] = '/var/log/gitlab/postgresql/reset_sampling'
