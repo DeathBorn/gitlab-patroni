@@ -1,6 +1,6 @@
-postgresql_helper   = GitlabPatroni::PostgresqlHelper.new(node)
+postgresql_helper = GitlabPatroni::PostgresqlHelper.new(node)
 reset_sampling_script_path = node['gitlab-patroni']['reset_sampling']['reset_sampling_script_path']
-log_path_prefix     = node['gitlab-patroni']['reset_sampling']['log_path_prefix']
+log_path_prefix = node['gitlab-patroni']['reset_sampling']['log_path_prefix']
 
 cookbook_file reset_sampling_script_path do
   source File.basename(name)
