@@ -13,13 +13,14 @@ driver:
 provisioner:
   product_name: chef
   product_version: 14.12.3
-  data_bags_path: "./test/fixtures/data_bags"
+  data_bags_path: ./test/fixtures/data_bags
 
 platforms:
   - name: ubuntu-16-04-x64
     driver:
       image_project: ubuntu-os-cloud
       image_family: ubuntu-1604-lts
+      image_name: ubuntu-1604-xenial-v20210928
       metadata:
         application: ubuntu
         release: a
@@ -105,7 +106,7 @@ suites:
   - name: patroni
     lifecycle:
       pre_converge:
-        remote: "sudo apt-get clean && sudo apt-get update"
+        remote: sudo apt-get clean && sudo apt-get update
     run_list:
       - recipe[gitlab-patroni::kitchen_chef_sslerror_fix]
       - recipe[gitlab_consul::cluster]
