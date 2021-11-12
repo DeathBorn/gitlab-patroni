@@ -18,12 +18,9 @@ provisioner:
 platforms:
   - name: ubuntu-16-04-x64
     driver:
-      image_project: ubuntu-os-cloud
+      image_project: gitlab-production
       image_family: ubuntu-1604-lts
-      metadata:
-        application: ubuntu
-        release: a
-        version: 1604
+      image_name: gitlab-ubuntu-1604
   - name: ubuntu-18-04-x64
     driver:
       image_project: ubuntu-os-cloud
