@@ -18,8 +18,7 @@ provisioner:
 platforms:
   - name: ubuntu-16-04-x64
     driver:
-      image_project: gitlab-production
-      image_family: ubuntu-1604-lts
+      image_project: gitlab-test-kitchen
       image_name: gitlab-ubuntu-1604
   - name: ubuntu-18-04-x64
     driver:
