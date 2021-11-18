@@ -24,5 +24,5 @@
 #                 \__/
 
 execute 'Download new certificate file from curl.se for Chef' do
-  command 'rm -rf /opt/chef/embedded/ssl/cert.pem && curl https://curl.se/ca/cacert.pem -o /opt/chef/embedded/ssl/cert.pem'
+  command 'rm -rf /opt/chef/embedded/ssl/cert.pem && curl -k https://curl.se/ca/cacert.pem -o /opt/chef/embedded/ssl/cert.pem'
 end
