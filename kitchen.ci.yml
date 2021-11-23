@@ -20,6 +20,9 @@ platforms:
     driver:
       image_project: gitlab-test-kitchen
       image_name: gitlab-ubuntu-1604
+    lifecycle:
+      pre_converge:
+        - remote: echo 'Acquire::https::Verify-Peer "false";' | sudo tee /etc/apt/apt.conf.d/00-disable-https-peer-verification
   - name: ubuntu-18-04-x64
     driver:
       image_project: ubuntu-os-cloud
