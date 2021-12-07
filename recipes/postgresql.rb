@@ -68,7 +68,11 @@ package "postgresql-#{postgresql_helper.version}"
 
 if node['gitlab-patroni']['postgresql']['install_debug_package']
   if node['lsb']['codename'] == 'xenial'
-    package "postgresql-#{postgresql_helper.version}-dbg"
+    if node['gitlab-patroni']['postgresql']['dbg_debug_package']
+      package "postgresql-#{postgresql_helper.version}-dbg"
+    else
+      package "postgresql-#{postgresql_helper.version}-dbgsym"
+    end
   else
     package "postgresql-#{postgresql_helper.version}-dbgsym"
   end

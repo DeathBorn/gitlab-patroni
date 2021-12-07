@@ -71,6 +71,20 @@ describe 'gitlab-patroni::default' do
       expect(chef_run).to install_package('postgresql-12-dbg')
     end
 
+    context 'with ubuntu xenial and dbg_debug_package set to false' do
+      platform 'ubuntu', '16.04'
+      let(:chef_run) do
+        ChefSpec::ServerRunner.new do |node|
+          node.normal['etc']['passwd'] = {}
+          node.normal['gitlab-patroni']['postgresql']['dbg_debug_package'] = false
+        end.converge(described_recipe)
+      end
+
+      it 'does not install postgresql-dbg' do
+        expect(chef_run).not_to install_package('postgresql-12-dbg')
+      end
+    end
+
     context 'with install_debug_package set to false' do
       let(:chef_run) do
         ChefSpec::ServerRunner.new do |node|
