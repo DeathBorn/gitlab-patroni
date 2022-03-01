@@ -37,7 +37,7 @@ bootstrap:
       options:
       - replication
     console-admin:
-      password:
+      password: ''
       options:
       - superuser
       - createrole

@@ -58,6 +58,7 @@ default['gitlab-patroni']['patroni']['users']['replication']['password'] = 'in-v
 default['gitlab-patroni']['patroni']['users']['replication']['options'] = %w[replication]
 
 default['gitlab-patroni']['patroni']['users']['console-admin']['username'] = 'console-admin'
+default['gitlab-patroni']['patroni']['users']['console-admin']['password'] = ''
 default['gitlab-patroni']['patroni']['users']['console-admin']['options'] = %w[superuser createrole createdb]
 
 default['gitlab-patroni']['patroni']['config']['scope'] = 'pg-ha-cluster'
