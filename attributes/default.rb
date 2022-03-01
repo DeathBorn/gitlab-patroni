@@ -60,6 +60,10 @@ default['gitlab-patroni']['patroni']['users']['replication']['options'] = %w[rep
 default['gitlab-patroni']['patroni']['users']['console-admin']['username'] = 'console-admin'
 default['gitlab-patroni']['patroni']['users']['console-admin']['password'] = ''
 default['gitlab-patroni']['patroni']['users']['console-admin']['options'] = %w[superuser createrole createdb]
+default['gitlab-patroni']['patroni']['users']['console-rw']['username'] = 'console-rw'
+default['gitlab-patroni']['patroni']['users']['console-rw']['password'] = ''
+default['gitlab-patroni']['patroni']['users']['console-ro']['username'] = 'console-ro'
+default['gitlab-patroni']['patroni']['users']['console-ro']['password'] = ''
 
 default['gitlab-patroni']['patroni']['config']['scope'] = 'pg-ha-cluster'
 default['gitlab-patroni']['patroni']['config']['name'] = node.name

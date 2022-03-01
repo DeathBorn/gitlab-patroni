@@ -42,6 +42,12 @@ bootstrap:
       - superuser
       - createrole
       - createdb
+    console-rw:
+      password: ''
+      options: []
+    console-ro:
+      password: ''
+      options: []
     pgbouncer:
       password: hunter2
       options: []
