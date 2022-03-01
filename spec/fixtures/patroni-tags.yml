@@ -36,6 +36,12 @@ bootstrap:
       password: replication-password
       options:
       - replication
+    console-admin:
+      password:
+      options:
+      - superuser
+      - createrole
+      - createdb
     pgbouncer:
       password: hunter2
       options: []
