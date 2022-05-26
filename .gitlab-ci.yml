@@ -55,6 +55,7 @@ kitchen-test-job:
         - ubuntu-20-04-x64
 
 push-cookbook:
+  image: ruby:2.7
   stage: publish
   only:
     refs:
