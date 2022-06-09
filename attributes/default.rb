@@ -105,7 +105,10 @@ default['gitlab-patroni']['issues_notes']['cron']['hour'] = '*/1'
 default['gitlab-patroni']['issues_notes']['analyze_script_path'] = '/usr/local/bin/analyze-issues_notes-table.sh'
 default['gitlab-patroni']['issues_notes']['log_path_prefix'] = '/var/log/gitlab/postgresql/analyze-issues_notes-table'
 
-default['gitlab-patroni']['zlonk']['directory'] = '/opt/zlonk'
+default['gitlab-patroni']['zlonk']['enabled'] = true
+default['gitlab-patroni']['zlonk']['directory'] = '/var/opt/gitlab/postgresql/opt/zlonk'
+default['gitlab-patroni']['zlonk']['log_directory'] = '/var/log/gitlab/zlonk'
 default['gitlab-patroni']['zlonk']['git-http'] = 'https://gitlab.com/gitlab-com/gl-infra/zlonk.git'
 default['gitlab-patroni']['zlonk']['branch'] = 'master'
-default['gitlab-patroni']['zlonk']['git-http'] = 'https://gitlab.com/gitlab-com/gl-infra/zlonk.git'
+default['gitlab-patroni']['zlonk']['project'] = ''
+default['gitlab-patroni']['zlonk']['instance'] = ''
