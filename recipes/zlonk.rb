@@ -17,6 +17,9 @@ git zlonk_dir do
   action :sync
 end
 
+directory "#{log_dir}/#{project}/#{instance}" do
+end
+
 cron 'zlonk create' do
   command "#{zlonk_dir}/bin/zlonk.sh #{project} #{instance} >> #{log_dir}/#{project}/#{instance}/zlonk.log 2>&1"
   hour '21'
