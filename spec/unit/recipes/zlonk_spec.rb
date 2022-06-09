@@ -33,7 +33,7 @@ describe 'gitlab-patroni::zlonk' do
       ChefSpec::ServerRunner.new do |node|
         node.normal['gitlab-patroni']['zlonk']['enabled'] = true
         node.normal['gitlab-patroni']['zlonk']['project'] = 'project'
-        node.normal['gitlab-patroni']['zlonk']['instance'] = 'instance'  
+        node.normal['gitlab-patroni']['zlonk']['instance'] = 'instance'
       end.converge(described_recipe)
     end
     it 'creates cron for snapshots' do
@@ -46,7 +46,7 @@ describe 'gitlab-patroni::zlonk' do
         command: '/var/opt/gitlab/postgresql/opt/zlonk/bin/zlonk.sh project instance >> /var/log/gitlab/zlonk/project/instance/zlonk.log 2>&1',
         hour: '21',
         minute: '30'
-      ) 
+      )
     end
   end
   context 'with zlonk disabled' do
@@ -54,7 +54,7 @@ describe 'gitlab-patroni::zlonk' do
       ChefSpec::ServerRunner.new do |node|
         node.normal['gitlab-patroni']['zlonk']['enabled'] = false
         node.normal['gitlab-patroni']['zlonk']['project'] = 'project'
-        node.normal['gitlab-patroni']['zlonk']['instance'] = 'instance'  
+        node.normal['gitlab-patroni']['zlonk']['instance'] = 'instance'
       end.converge(described_recipe)
     end
     it 'creates cron for snapshots' do
@@ -67,8 +67,7 @@ describe 'gitlab-patroni::zlonk' do
         command: '/var/opt/gitlab/postgresql/opt/zlonk/bin/zlonk.sh project instance >> /var/log/gitlab/zlonk/project/instance/zlonk.log 2>&1',
         hour: '21',
         minute: '30'
-      ) 
+      )
     end
   end
 end
-
