@@ -24,6 +24,12 @@ describe 'gitlab-patroni::zlonk' do
     expect(chef_run).to sync_git('/var/opt/gitlab/postgresql/opt/zlonk')
   end
 
+  it 'makes zlonk script executable' do
+    expect(chef_run).to create_file('/var/opt/gitlab/postgresql/opt/zlonk/bin/zlonk.sh').with(
+      mode: '0755'
+    )
+  end
+
   it 'creates log directory' do
     expect(chef_run).to create_directory('/var/log/gitlab/zlonk/project/instance')
   end
