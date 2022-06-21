@@ -17,7 +17,12 @@ git zlonk_dir do
   action :sync
 end
 
+file "#{zlonk_dir}/bin/zlonk.sh" do
+  mode '0755'
+end
+
 directory "#{log_dir}/#{project}/#{instance}" do
+  recursive true
 end
 
 cron 'zlonk create' do
