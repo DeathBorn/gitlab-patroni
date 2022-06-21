@@ -18,6 +18,7 @@ git zlonk_dir do
 end
 
 directory "#{log_dir}/#{project}/#{instance}" do
+  recursive true
 end
 
 cron 'zlonk create' do
