@@ -10,8 +10,11 @@ for i in $(seq 1 5); do
   sleep 60
 done
 
-## A sleep of 30 minutes is necessary to avoid lock conflicts with concurrent tasks such as alter tables, create triggers, indexes rebuild, etc.
-##     which are a common necessity after some large scale changes like database decompositions, OS/library upgrades, etc.
+# A sleep of 30 minutes is necessary to avoid lock conflicts with concurrent tasks 
+#   such as alter tables, create triggers, indexes rebuild, etc.
+#   which are a common necessity after some large scale changes 
+#   like database decompositions, OS/library upgrades, etc.
+
 sleep 30m
 
 vacuumdb --host=<%= @host %> --port=<%= @port %> --dbname=<%= @db_name %> --username=<%= @superuser %> --analyze-only --jobs=<%= @jobs %> --echo
