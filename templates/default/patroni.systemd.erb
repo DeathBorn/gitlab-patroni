@@ -29,5 +29,8 @@ TimeoutSec=30
 # Do not restart the service if it crashes, we want to manually inspect database on failure
 Restart=no
 
+# Adjust the likelihood that processes of this service get targeted by the OOM killer
+OOMScoreAdjust=-1000
+
 [Install]
 WantedBy=multi-user.target
