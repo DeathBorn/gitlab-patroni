@@ -112,3 +112,5 @@ default['gitlab-patroni']['zlonk']['git-http'] = 'https://gitlab.com/gitlab-com/
 default['gitlab-patroni']['zlonk']['branch'] = 'master'
 default['gitlab-patroni']['zlonk']['project'] = ''
 default['gitlab-patroni']['zlonk']['instance'] = ''
+
+default['gitlab-patroni']['patroni']['auto_restart'] = 'no'
