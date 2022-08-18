@@ -113,4 +113,4 @@ default['gitlab-patroni']['zlonk']['branch'] = 'master'
 default['gitlab-patroni']['zlonk']['project'] = ''
 default['gitlab-patroni']['zlonk']['instance'] = ''
 
-default['gitlab-patroni']['patroni'][systemd]['auto_restart'] = 'no'
+default['gitlab-patroni']['patroni']['systemd']['auto_restart'] = 'no'
