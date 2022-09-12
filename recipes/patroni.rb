@@ -122,7 +122,7 @@ end
 poise_service 'patroni' do
   command ''
   provider :systemd
-  options :systemd, template: 'patroni.systemd.erb', never_start: true
+  options :systemd, template: 'patroni.systemd.erb', never_start: true, never_restart: true
 end
 
 service 'rsyslog' do
