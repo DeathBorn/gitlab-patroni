@@ -12,13 +12,6 @@ transport:
   name: dokken
 
 platforms:
-- name: ubuntu-16.04
-  driver:
-    image: dokken/ubuntu-16.04
-    pid_one_command: /sbin/init
-    intermediate_instructions:
-      - RUN apt-get -y install rsyslog
-
 - name: ubuntu-18.04
   driver:
     image: dokken/ubuntu-18.04
