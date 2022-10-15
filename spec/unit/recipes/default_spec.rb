@@ -471,7 +471,7 @@ else
   privilege_drop="-u postgres"
 fi
 
-cd /tmp; exec chpst ${privilege_drop} -U postgres psql -p 5432 -h localhost -U gitlab-superuser -d gitlabhq_production "$@"
+cd /tmp; sudo runuser ${privilege_drop} -- /usr/bin/psql -p 5432 -h localhost -U gitlab-superuser -d gitlabhq_production "${@}"
       STR
 
       expect(chef_run).to create_template(gitlab_psql_path).with(mode: '0777')

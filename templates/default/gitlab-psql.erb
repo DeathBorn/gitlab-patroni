@@ -6,4 +6,4 @@ else
   privilege_drop="-u <%= @postgresql_user %>"
 fi
 
-cd /tmp; exec chpst ${privilege_drop} -U <%= @postgresql_user %> psql -p <%= @port %> -h <%= @host %> -U <%= @superuser %> -d <%= @db_name %> "$@"
+cd /tmp; sudo runuser ${privilege_drop} -- /usr/bin/psql -p <%= @port %> -h <%= @host %> -U <%= @superuser %> -d <%= @db_name %> "${@}"
