@@ -466,12 +466,10 @@ YML
 #!/bin/sh
 
 if [ "$(id -n -u)" = "postgres" ] ; then
-  privilege_drop=''
+  cd /tmp; /usr/bin/psql -p 5432 -h localhost -U gitlab-superuser -d gitlabhq_production "${@}"
 else
-  privilege_drop="-u postgres"
+  cd /tmp; sudo runuser -u postgres -- /usr/bin/psql -p 5432 -h localhost -U gitlab-superuser -d gitlabhq_production "${@}"
 fi
-
-cd /tmp; sudo runuser ${privilege_drop} -- /usr/bin/psql -p 5432 -h localhost -U gitlab-superuser -d gitlabhq_production "${@}"
       STR
 
       expect(chef_run).to create_template(gitlab_psql_path).with(mode: '0777')
