@@ -1,9 +1,7 @@
 #!/bin/sh
 
 if [ "$(id -n -u)" = "<%= @postgresql_user %>" ] ; then
-  privilege_drop=''
+  cd /tmp; /usr/bin/psql -p <%= @port %> -h <%= @host %> -U <%= @superuser %> -d <%= @db_name %> "${@}"
 else
-  privilege_drop="-u <%= @postgresql_user %>"
+  cd /tmp; sudo runuser -u <%= @postgresql_user %> -- /usr/bin/psql -p <%= @port %> -h <%= @host %> -U <%= @superuser %> -d <%= @db_name %> "${@}"
 fi
-
-cd /tmp; sudo runuser ${privilege_drop} -- /usr/bin/psql -p <%= @port %> -h <%= @host %> -U <%= @superuser %> -d <%= @db_name %> "${@}"
