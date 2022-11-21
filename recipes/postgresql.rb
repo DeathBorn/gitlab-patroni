@@ -18,7 +18,6 @@ end
 
 user postgresql_helper.postgresql_user do
   home postgresql_user_home
-  manage_home true
   not_if { node['etc']['passwd'].key?(postgresql_helper.postgresql_user) }
 end
 
