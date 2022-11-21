@@ -176,7 +176,7 @@ describe 'gitlab-patroni::default' do
 
       context 'when the users does not exist' do
         it 'creates the user' do
-          expect(chef_run).to create_user('postgres').with(manage_home: true, home: '/var/opt/gitlab/postgresql')
+          expect(chef_run).to create_user('postgres').with(home: '/var/opt/gitlab/postgresql')
         end
       end
     end
