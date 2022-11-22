@@ -1,0 +1,37 @@
+#!/bin/bash
+
+exec &> >(tee -a "<%= @log_path_prefix %>.log")
+
+# GitLab Job metric settings
+# https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/uncategorized/job_completion.md
+RESOURCE='pg_wait_sampling_reset'
+MAX_AGE='30' # 30 seconds
+PROM_SHARD='shard/<%= node['prometheus']['labels']['shard'] %>'
+PROM_TIER='tier/<%= node['prometheus']['labels']['tier'] %>'
+PROM_TYPE='type/<%= node['prometheus']['labels']['type'] %>'
+
+pushgateway(){
+  local url="http://localhost:9091/metrics/job/${RESOURCE}/${PROM_SHARD}/${PROM_TIER}/${PROM_TYPE}"
+  curl -siv --data-binary @- "${url}"
+}
+
+echo "============== $(date +%Y%m%d-%H%M%S)"
+
+# Push start of job to pushgateway
+cat <<PROM | pushgateway
+# HELP gitlab_job_start_timestamp_seconds The start time of the job.
+# TYPE gitlab_job_start_timestamp_seconds gauge
+gitlab_job_start_timestamp_seconds{resource="${RESOURCE}"} $(date +%s)
+# HELP gitlab_job_success_timestamp_seconds The time the job succeeded.
+# TYPE gitlab_job_success_timestamp_seconds gauge
+gitlab_job_success_timestamp_seconds{resource="${RESOURCE}"} 0
+# HELP gitlab_job_max_age_seconds How long the job is allowed to run before marking it failed.
+# TYPE gitlab_job_max_age_seconds gauge
+gitlab_job_max_age_seconds{resource="${RESOURCE}"} ${MAX_AGE}
+# HELP gitlab_job_failed Boolean status of the job.
+# TYPE gitlab_job_failed gauge
+gitlab_job_failed{resource="${RESOURCE}"} 0
+PROM
+
+# If we are running on the primary we reset the pg_wait_sampling profile
+if [ "$(gitlab-psql -tAXc 'select pg_is_in_recovery()')" = "f" ]; then gitlab-psql -c "SELECT pg_wait_sampling_reset_profile();"; fi
