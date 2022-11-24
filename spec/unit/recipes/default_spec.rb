@@ -181,6 +181,52 @@ describe 'gitlab-patroni::default' do
       end
     end
 
+    describe 'chown for snapshot restore' do
+      let(:pg_user_homedir) { '/some/user/home' }
+      let(:config_directory) { '/some/config/dir' }
+      let(:fake_postgres) { double(name: 'postgres') }
+      let(:fake_other_user) { double(name: 'some-other-user') }
+      let(:fake_stat) { double(uid: 9000) }
+
+      let(:chef_run) do
+        ChefSpec::ServerRunner.new do |node|
+          node.normal['etc']['passwd']['postgres'] = {}
+          node.normal['gitlab-patroni']['postgresql']['config_directory'] = config_directory
+          node.normal['gitlab-patroni']['postgresql']['pg_user_homedir'] = pg_user_homedir
+        end.converge(described_recipe)
+      end
+      before do
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with(pg_user_homedir).and_return(true)
+        allow(File).to receive(:exist?).with(config_directory).and_return(true)
+        allow(File).to receive(:stat).and_call_original
+        allow(File).to receive(:stat).with(config_directory).and_return(fake_stat)
+        allow(File).to receive(:stat).with(pg_user_homedir).and_return(fake_stat)
+      end
+
+      context 'when directory permissions are not set correctly' do
+        before do
+          allow(Etc).to receive(:getpwuid).with(9000).and_return(fake_other_user)
+        end
+
+        it 'fixes the directory permissions recursively' do
+          expect(chef_run).to run_execute("chown #{pg_user_homedir}").with(command: "chown -R postgres:postgres #{pg_user_homedir}")
+          expect(chef_run).to run_execute("chown #{config_directory}").with(command: "chown -R postgres:postgres #{config_directory}")
+        end
+      end
+
+      context 'when directory permissions are set correctly' do
+        before do
+          allow(Etc).to receive(:getpwuid).with(9000).and_return(fake_postgres)
+        end
+
+        it 'does not fix the directory permissions recursively' do
+          expect(chef_run).not_to run_execute("chown #{pg_user_homedir}")
+          expect(chef_run).not_to run_execute("chown #{config_directory}")
+        end
+      end
+    end
+
     it 'stops and disables postgresql service' do
       expect(chef_run).to stop_service('postgresql')
       expect(chef_run).to disable_service('postgresql')

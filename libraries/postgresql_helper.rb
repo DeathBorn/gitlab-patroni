@@ -25,5 +25,9 @@ module GitlabPatroni
     def version
       node['gitlab-patroni']['postgresql']['version']
     end
+
+    def dir_exist_not_postgres_owned?(dir)
+      File.exist?(dir) && (Etc.getpwuid(::File.stat(dir).uid).name != postgresql_user)
+    end
   end
 end

@@ -21,6 +21,18 @@ user postgresql_helper.postgresql_user do
   not_if { node['etc']['passwd'].key?(postgresql_helper.postgresql_user) }
 end
 
+# When restoring from a disk snapshot, these two chown commands are necessary
+# if the source disk has different uids than the server
+execute "chown #{postgresql_user_home}" do
+  command "chown -R #{postgresql_helper.postgresql_user}:#{postgresql_helper.postgresql_group} #{postgresql_user_home}"
+  only_if { postgresql_helper.dir_exist_not_postgres_owned?(postgresql_user_home) }
+end
+
+execute "chown #{postgresql_config_directory}" do
+  command "chown -R #{postgresql_helper.postgresql_user}:#{postgresql_helper.postgresql_group} #{postgresql_config_directory}"
+  only_if { postgresql_helper.dir_exist_not_postgres_owned?(postgresql_config_directory) }
+end
+
 directory postgresql_user_home do
   owner postgresql_helper.postgresql_user
   group postgresql_helper.postgresql_group
