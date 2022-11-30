@@ -34,4 +34,4 @@ gitlab_job_failed{resource="${RESOURCE}"} 0
 PROM
 
 # If we are running on the primary we reset the pg_wait_sampling profile
-if [ "$(gitlab-psql -tAXc 'select pg_is_in_recovery()')" = "f" ]; then gitlab-psql -c "SELECT pg_wait_sampling_reset_profile();"; fi
+curl -o /dev/null -sf http://localhost:8009/leader && gitlab-psql -c "SELECT pg_wait_sampling_reset_profile();"
