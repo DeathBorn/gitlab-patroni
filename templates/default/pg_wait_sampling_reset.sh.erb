@@ -17,8 +17,8 @@ pushgateway(){
 
 echo "============== $(date +%Y%m%d-%H%M%S)"
 
-# Push start of job to pushgateway
-cat <<PROM | pushgateway
+if curl -o /dev/null -sf http://localhost:8009/leader; then
+  cat <<PROM | pushgateway
 # HELP gitlab_job_start_timestamp_seconds The start time of the job.
 # TYPE gitlab_job_start_timestamp_seconds gauge
 gitlab_job_start_timestamp_seconds{resource="${RESOURCE}"} $(date +%s)
@@ -33,5 +33,11 @@ gitlab_job_max_age_seconds{resource="${RESOURCE}"} ${MAX_AGE}
 gitlab_job_failed{resource="${RESOURCE}"} 0
 PROM
 
-# If we are running on the primary we reset the pg_wait_sampling profile
-curl -o /dev/null -sf http://localhost:8009/leader && gitlab-psql -c "SELECT pg_wait_sampling_reset_profile();"
+  gitlab-psql -c "SELECT pg_wait_sampling_reset_profile();"
+
+  cat <<PROM | pushgateway
+# HELP gitlab_job_success_timestamp_seconds The time the job succeeded.
+# TYPE gitlab_job_success_timestamp_seconds gauge
+gitlab_job_success_timestamp_seconds{resource="${RESOURCE}"} $(date +%s)
+PROM
+fi

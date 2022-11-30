@@ -116,6 +116,7 @@ default['gitlab-patroni']['zlonk']['instance'] = ''
 default['gitlab-patroni']['patroni']['systemd']['auto_restart'] = 'no'
 
 default['gitlab-patroni']['pg_wait_sampling']['pg_wait_sampling_reset_path'] = '/usr/local/bin/pg_wait_sampling_reset.sh'
+default['gitlab-patroni']['pg_wait_sampling']['log_path_prefix'] = '/var/log/gitlab/postgresql/pg_wait_sampling'
 default['gitlab-patroni']['pg_wait_sampling']['reset_cron']['minute'] = 0
 default['gitlab-patroni']['pg_wait_sampling']['reset_cron']['hour'] = 3
 default['gitlab-patroni']['pg_wait_sampling']['reset_cron']['weekday'] = 'sunday'
