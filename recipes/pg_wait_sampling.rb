@@ -31,3 +31,12 @@ cron 'pg_wait_sampling reset' do
   path '/usr/local/sbin:/usr/sbin/:/sbin:/usr/local/bin:/usr/bin:/bin:/snap/bin'
   action :create
 end
+
+include_recipe 'logrotate::default'
+
+logrotate_app :pg_wait_sampling do
+  path "#{log_path_prefix}*.log"
+  options %w(missingok compress delaycompress notifempty)
+  rotate 12
+  frequency 'weekly'
+end
